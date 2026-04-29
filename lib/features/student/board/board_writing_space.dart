@@ -44,7 +44,7 @@ class _BoardWritingSpaceState extends State<BoardWritingSpace> {
               fontSize: 20,
               fontWeight: FontWeight.bold,
               color: _currentLength > _maxLength
-                  ? AppColors.accentPink
+                  ? AppColors.pastelPink
                   : AppColors.mainBrown,
             ),
             decoration: InputDecoration(
@@ -81,7 +81,7 @@ class _BoardWritingSpaceState extends State<BoardWritingSpace> {
                 TextSpan(
                   text: '$_currentLength',
                   style: TextStyle(
-                    color: isOverLimit ? AppColors.accentPink : Colors.grey,
+                    color: isOverLimit ? AppColors.pastelPink : Colors.grey,
                     fontWeight: isOverLimit
                         ? FontWeight.bold
                         : FontWeight.normal,

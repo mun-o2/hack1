@@ -19,6 +19,10 @@ class _StudentBoardScreenState extends ConsumerState<StudentBoardScreen> {
   Widget build(BuildContext context) {
     final posts = ref.watch(postListProvider);
 
+    final Map<String, dynamic> theme = ref.watch(colorThemeProvider);
+    final Map<String, Color> categoryColors =
+        theme['categories'] as Map<String, Color>;
+
     Image.asset(AppAssets.glass);
 
     return Scaffold(
@@ -44,8 +48,8 @@ class _StudentBoardScreenState extends ConsumerState<StudentBoardScreen> {
             scrollDirection: Axis.horizontal, // 横にスクロール
             padding: const EdgeInsets.fromLTRB(10, 25, 0, 0),
             child: Row(
-              children: AppColors.categoryColors.keys.map((category) {
-                return _buildCategoryButton(category);
+              children: categoryColors.keys.map((category) {
+                return _buildCategoryButton(category, categoryColors);
               }).toList(),
             ),
           ),
@@ -61,7 +65,12 @@ class _StudentBoardScreenState extends ConsumerState<StudentBoardScreen> {
                     post.category != selectedCategory) {
                   return const SizedBox.shrink(); // 一致しなければ表示しない
                 }
-                return postCard(post.category, post.dateTime, post.content);
+                return postCard(
+                  post.category,
+                  post.dateTime,
+                  post.content,
+                  categoryColors,
+                );
               },
             ),
           ),
@@ -90,8 +99,8 @@ class _StudentBoardScreenState extends ConsumerState<StudentBoardScreen> {
   }
 
   // カテゴリボタンを作るパーツ
-  Widget _buildCategoryButton(String category) {
-    final Color themeColor = AppColors.getCategoryColor(category);
+  Widget _buildCategoryButton(String category, Map<String, Color> colorSet) {
+    final Color themeColor = AppColors.getCategoryColor(category, colorSet);
 
     // selectedCategory が null でない、かつ今のカテゴリと一致しているか
     final bool isSelected = selectedCategory == category;
@@ -128,9 +137,14 @@ class _StudentBoardScreenState extends ConsumerState<StudentBoardScreen> {
   }
 
   // 各投稿のパーツ
-  Widget postCard(String category, String dateTime, String content) {
+  Widget postCard(
+    String category,
+    String dateTime,
+    String content,
+    Map<String, Color> colorSet,
+  ) {
     // カテゴリに応じた色を取得
-    final Color themeColor = AppColors.getCategoryColor(category);
+    final Color themeColor = AppColors.getCategoryColor(category, colorSet);
     return Container(
       width: 340,
       margin: const EdgeInsets.symmetric(horizontal: 24, vertical: 15),

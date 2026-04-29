@@ -17,17 +17,21 @@ class _StudentBoardPostState extends ConsumerState<StudentBoardPost> {
 
   @override
   Widget build(BuildContext context) {
+    final theme = ref.watch(colorThemeProvider);
+    final categoryColors = theme['categories'] as Map<String, Color>;
+    final pinkColor = theme['pink'] as Color; // ピンク系のテーマ色
+
     // 保存ボタン
     final saveButton = GestureDetector(
       onTap: () {
         if (_enteredText.isEmpty) {
-          _showCustomToast(context, '本文を入力してください'); //
+          _showCustomToast(context, '本文を入力してください', pinkColor); //
           return;
         } else if (_enteredText.length > 50) {
-          _showCustomToast(context, '50文字以内で入力してください');
+          _showCustomToast(context, '50文字以内で入力してください', pinkColor);
           return;
         } else if (_selectedCategory.isEmpty) {
-          _showCustomToast(context, 'カテゴリを選択してください');
+          _showCustomToast(context, 'カテゴリを選択してください', pinkColor);
           return;
         }
 
@@ -40,12 +44,12 @@ class _StudentBoardPostState extends ConsumerState<StudentBoardPost> {
         ref.read(postListProvider.notifier).addPost(newPost);
         Navigator.pop(context); // 前の画面に戻る
       },
-      child: const Text(
+      child: Text(
         '保存',
         style: TextStyle(
           fontSize: 20,
           fontWeight: FontWeight.bold,
-          color: AppColors.accentPink,
+          color: pinkColor,
         ),
       ),
     );
@@ -56,10 +60,7 @@ class _StudentBoardPostState extends ConsumerState<StudentBoardPost> {
       child: Container(
         width: 25,
         height: 25,
-        decoration: const BoxDecoration(
-          color: AppColors.accentPink,
-          shape: BoxShape.rectangle,
-        ),
+        decoration: BoxDecoration(color: pinkColor, shape: BoxShape.rectangle),
         child: const Icon(Icons.close, size: 20, color: Colors.white),
       ),
     );
@@ -93,6 +94,7 @@ class _StudentBoardPostState extends ConsumerState<StudentBoardPost> {
           // カテゴリ選択
           CategorySelect(
             isMultiSelect: false, // 単一選択
+            categoryColors: categoryColors,
             onChanged: (category) {
               setState(() {
                 _selectedCategory = category as String; // Stringとして受け取る
@@ -105,7 +107,11 @@ class _StudentBoardPostState extends ConsumerState<StudentBoardPost> {
   }
 
   // 警告メッセージ
-  void _showCustomToast(BuildContext context, String message) {
+  void _showCustomToast(
+    BuildContext context,
+    String message,
+    Color themeColor,
+  ) {
     final overlay = Overlay.of(context);
     final overlayEntry = OverlayEntry(
       builder: (context) => Positioned(
@@ -117,7 +123,7 @@ class _StudentBoardPostState extends ConsumerState<StudentBoardPost> {
           child: Container(
             padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 12),
             decoration: BoxDecoration(
-              color: AppColors.accentPink.withValues(alpha: 0.8),
+              color: themeColor.withValues(alpha: 0.8),
               borderRadius: BorderRadius.circular(10),
             ),
             child: Text(

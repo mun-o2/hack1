@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hack1/features/materials.dart';
 
-class SeniorHomeScreen extends StatelessWidget {
+class SeniorHomeScreen extends ConsumerWidget {
   const SeniorHomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // 現在の色セットを監視（watch）する
+    final theme = ref.watch(colorThemeProvider);
+
     return Scaffold(
       backgroundColor: AppColors.backgroundBeige,
       floatingActionButton: FloatingActionButton(
@@ -49,9 +53,9 @@ class SeniorHomeScreen extends StatelessWidget {
               HomeMenuCard(
                 label: '掲示板',
                 subLabel: '若者の投稿を見る',
+                themeColor: theme['pink'] as Color,
                 onTap: () => context.push('/senior/board'),
                 icon: Icons.message,
-                themeColor: AppColors.accentPink,
               ),
 
               const SizedBox(height: 34),
@@ -59,9 +63,9 @@ class SeniorHomeScreen extends StatelessWidget {
               HomeMenuCard(
                 label: '思い出',
                 subLabel: 'お話の記録を見る',
+                themeColor: theme['yellow'] as Color,
                 onTap: () => context.push('/senior/memory'),
                 icon: Icons.auto_stories,
-                themeColor: AppColors.accentYellow,
               ),
 
               const SizedBox(height: 34),
@@ -69,9 +73,9 @@ class SeniorHomeScreen extends StatelessWidget {
               HomeMenuCard(
                 label: '設定',
                 subLabel: 'アカウント設定',
+                themeColor: theme['green'] as Color,
                 onTap: () => context.push('/senior/setting'),
                 icon: Icons.manage_accounts_outlined,
-                themeColor: AppColors.accentGreen,
               ),
             ],
           ),

@@ -11,7 +11,7 @@ class StudentBottomNavBar extends StatelessWidget {
     required this.onTap,
   });
 
-  static const Color activeColor = AppColors.accentPink;
+  static const Color activeColor = AppColors.pastelPink;
   static const Color selectedBgColor = Color(0xFFF3EEE9);
 
   @override

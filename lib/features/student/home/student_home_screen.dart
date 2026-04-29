@@ -45,7 +45,7 @@ class StudentHomeScreen extends StatelessWidget {
                 subLabel: '質問をする',
                 onTap: () => context.push('/student/board'),
                 icon: Icons.message,
-                themeColor: AppColors.accentPink,
+                themeColor: AppColors.pastelPink,
               ),
 
               const SizedBox(height: 34),
@@ -55,7 +55,7 @@ class StudentHomeScreen extends StatelessWidget {
                 subLabel: 'お話の記録を見る',
                 onTap: () => context.push('/student/memory'),
                 icon: Icons.auto_stories,
-                themeColor: AppColors.accentYellow,
+                themeColor: AppColors.pastelYellow,
               ),
 
               const SizedBox(height: 34),
@@ -65,7 +65,7 @@ class StudentHomeScreen extends StatelessWidget {
                 subLabel: 'アカウント設定',
                 onTap: () => context.push('/student/setting'),
                 icon: Icons.manage_accounts_outlined,
-                themeColor: AppColors.accentGreen,
+                themeColor: AppColors.pastelGreen,
               ),
             ],
           ),

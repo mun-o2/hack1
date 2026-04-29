@@ -23,15 +23,26 @@ final postListProvider = StateNotifierProvider<PostListNotifier, List<Post>>((
 class AppColors {
   // メインのテーマカラーなど
   static const Color mainBrown = Color(0xFF6B4E3D);
-  static const Color accentPink = Color(0xFFF4A5B1);
   static const Color backgroundBeige = Color(0xFFFEF8F1);
 
-  static const Color accentYellow = Color(0xFFFAD28E);
-  static const Color accentGreen = Color(0xFFB5C9A7);
+  //見やすい
+  static const Color contrastPink = Color(0xFFA51228);
+  static const Color contrastYellow = Color(0xFF8E4210);
+  static const Color contrastGreen = Color(0xFF4B5F3A);
+  static const Map<String, Color> contrastCategoryColors = {
+    '震災': Color(0xFF55508B),
+    '戦争': Color(0xFF4B5F3A),
+    '人生': Color(0xFF6B4E3D),
+    '恋愛': Color(0xFFA51228),
+    '雑談': Color(0xFFFAD28E),
+    'その他': Color(0xFF36064C),
+  };
 
-  // カテゴリごとの色をMapで一括管理
   //かわいい
-  static const Map<String, Color> categoryColors = {
+  static const Color pastelPink = Color(0xFFF4A5B1);
+  static const Color pastelYellow = Color(0xFFFAD28E);
+  static const Color pastelGreen = Color(0xFFB5C9A7);
+  static const Map<String, Color> pastelCategoryColors = {
     '震災': Color(0xFFF2B186),
     '戦争': Color(0xFFB5C9A7),
     '人生': Color(0xFF6B4E3D),
@@ -40,11 +51,30 @@ class AppColors {
     'その他': Color(0xFF2A5AB0),
   };
 
-  // 安全に色を取得するためのメソッド
-  static Color getCategoryColor(String category) {
-    return categoryColors[category] ?? Colors.grey;
+  static Color getCategoryColor(String category, Map<String, Color> colorSet) {
+    // 指定された colorSet (contrast か pastel) から色を探す
+    return colorSet[category] ?? Colors.grey;
   }
 }
+
+// trueなら「見やすい」、falseなら「かわいい」
+final isHighContrastProvider = StateProvider<bool>((ref) => false);
+
+// 現在のカラーセットを返すプロバイダー
+final colorThemeProvider = Provider((ref) {
+  final isHighContrast = ref.watch(isHighContrastProvider);
+
+  return {
+    'categories': isHighContrast
+        ? AppColors.contrastCategoryColors
+        : AppColors.pastelCategoryColors,
+    'pink': isHighContrast ? AppColors.contrastPink : AppColors.pastelPink,
+    'yellow': isHighContrast
+        ? AppColors.contrastYellow
+        : AppColors.pastelYellow,
+    'green': isHighContrast ? AppColors.contrastGreen : AppColors.pastelGreen,
+  };
+});
 
 //掲示板の投稿１つ分
 class Post {
@@ -85,7 +115,7 @@ class HomeMenuCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
           border: Border.all(color: themeColor, width: 3),
         ),
-        padding: const EdgeInsets.symmetric(horizontal: 36),
+        padding: const EdgeInsets.fromLTRB(36, 0, 20, 0),
         child: Row(
           children: [
             Icon(icon, size: 70, color: themeColor),
@@ -115,8 +145,6 @@ class HomeMenuCard extends StatelessWidget {
                 ],
               ),
             ),
-
-            const Spacer(flex: 2),
           ],
         ),
       ),
@@ -130,10 +158,12 @@ class CategorySelect extends StatefulWidget {
   final Function(dynamic) onChanged;
   final bool isMultiSelect;
   final List<String> initialSelected;
+  final Map<String, Color> categoryColors;
 
   const CategorySelect({
     super.key,
     required this.onChanged,
+    required this.categoryColors,
     this.isMultiSelect = false,
     this.initialSelected = const [],
   });
@@ -161,7 +191,7 @@ class _CategorySelectState extends State<CategorySelect> {
       mainAxisSpacing: 20,
       crossAxisSpacing: 20,
       childAspectRatio: 2.5,
-      children: AppColors.categoryColors.entries.map((entry) {
+      children: widget.categoryColors.entries.map((entry) {
         return categoryButton(entry.key, entry.value);
       }).toList(),
     );
@@ -203,7 +233,7 @@ class _CategorySelectState extends State<CategorySelect> {
         child: Text(
           label,
           style: TextStyle(
-            fontSize: 25,
+            fontSize: 20,
             color: isSelected ? Colors.white : AppColors.mainBrown,
             fontWeight: FontWeight.bold,
           ),
