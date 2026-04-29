@@ -5,7 +5,10 @@ import 'package:hack1/features/senior/board/senior_board_screen.dart';
 import 'package:hack1/features/senior/home/senior_home_screen.dart';
 import 'package:hack1/features/senior/memory/senior_memory_screen.dart';
 import 'package:hack1/features/senior/setting/senior_setting_screen.dart';
+import 'package:hack1/features/student/board/student_board_screen.dart';
 import 'package:hack1/features/student/main/student_main_tab.dart';
+import 'package:hack1/features/student/memory/student_memory_screen.dart';
+import 'package:hack1/features/student/setting/student_setting_screen.dart';
 
 final GoRouter router = GoRouter(
   initialLocation: '/role',
@@ -17,6 +20,18 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/student',
       builder: (context, state) => const StudentMainTab(),
+    ),
+    GoRoute(
+      path: '/student/board',
+      builder: (context, state) => const StudentBoardScreen(),
+    ),
+    GoRoute(
+      path: '/student/memory',
+      builder: (context, state) => const StudentMemoryScreen(),
+    ),
+    GoRoute(
+      path: '/student/setting',
+      builder: (context, state) => const StudentSettingScreen(),
     ),
     GoRoute(
       path: '/senior',
