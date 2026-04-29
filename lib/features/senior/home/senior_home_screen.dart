@@ -60,7 +60,7 @@ class SeniorHomeScreen extends StatelessWidget {
                 label: '思い出',
                 subLabel: 'お話の記録を見る',
                 onTap: () => context.push('/senior/memory'),
-                icon: Icons.photo,
+                icon: Icons.auto_stories,
                 themeColor: AppColors.accentYellow,
               ),
 
@@ -70,7 +70,7 @@ class SeniorHomeScreen extends StatelessWidget {
                 label: '設定',
                 subLabel: 'アカウント設定',
                 onTap: () => context.push('/senior/setting'),
-                icon: Icons.settings,
+                icon: Icons.manage_accounts_outlined,
                 themeColor: AppColors.accentGreen,
               ),
             ],

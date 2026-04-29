@@ -2,8 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:hack1/features/setting_screen.dart';
 import 'package:hack1/features/materials.dart';
 
-class StudentSettingScreen extends StatelessWidget {
+class StudentSettingScreen extends StatefulWidget {
   const StudentSettingScreen({super.key});
+
+  @override
+  State<StudentSettingScreen> createState() => _StudentSettingScreenState();
+}
+
+class _StudentSettingScreenState extends State<StudentSettingScreen> {
+  List<String> _mySelectedList = [];
 
   @override
   Widget build(BuildContext context) {
@@ -20,7 +27,15 @@ class StudentSettingScreen extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 12),
-          //_buildCategoryGrid(), // カテゴリ表示（共通パーツにすれば使い回せます）
+          CategorySelect(
+            isMultiSelect: true, // 複数選択
+            initialSelected: _mySelectedList, // すでに保存されているリストがあれば渡す
+            onChanged: (list) {
+              setState(() {
+                _mySelectedList = list as List<String>; // Listとして受け取る
+              });
+            },
+          ),
         ],
       ),
     );

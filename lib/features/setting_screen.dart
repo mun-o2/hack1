@@ -85,7 +85,7 @@ class _SettingScreenState extends State<SettingScreen> {
   // アカウント（共通項目 + 追加項目）
   Widget _accountSetting() {
     return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start, // テキストを左寄せに
         children: [
@@ -95,7 +95,7 @@ class _SettingScreenState extends State<SettingScreen> {
           _buildSectionTitle('呼ばれたい名前'),
           const SizedBox(height: 8),
           SettingButton(
-            label: 'はるかちゃん', // ここは後に変数にする
+            label: 'はるかちゃん', // 後で変数にする
             onTap: () => print('名前変更ダイアログへ'),
           ),
 
@@ -105,7 +105,7 @@ class _SettingScreenState extends State<SettingScreen> {
           _buildSectionTitle('生年月日'),
           const SizedBox(height: 8),
           SettingButton(
-            label: '2004年6月1日', // ここも後に変数にする
+            label: '2004年6月1日', // 後で変数にする
             onTap: () => print('日付選択ダイアログへ'),
           ),
 
@@ -119,7 +119,7 @@ class _SettingScreenState extends State<SettingScreen> {
     );
   }
 
-  // --- セクションタイトルの共通パーツ ---
+  //タイトルの共通パーツ
   Widget _buildSectionTitle(String title) {
     return Text(
       title,

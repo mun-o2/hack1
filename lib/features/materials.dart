@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
-// 1. 投稿リストの状態を管理するクラス
+// 投稿リストの状態を管理するクラス
 class PostListNotifier extends StateNotifier<List<Post>> {
   PostListNotifier() : super([]); // 最初は空リスト
 
@@ -12,13 +12,14 @@ class PostListNotifier extends StateNotifier<List<Post>> {
   }
 }
 
-// 2. 外部からこのクラスを操作するためのプロバイダー
+// 外部からこのクラスを操作するためのプロバイダー
 final postListProvider = StateNotifierProvider<PostListNotifier, List<Post>>((
   ref,
 ) {
   return PostListNotifier();
 });
 
+//使用カラー管理
 class AppColors {
   // メインのテーマカラーなど
   static const Color mainBrown = Color(0xFF6B4E3D);
@@ -29,6 +30,7 @@ class AppColors {
   static const Color accentGreen = Color(0xFFB5C9A7);
 
   // カテゴリごとの色をMapで一括管理
+  //かわいい
   static const Map<String, Color> categoryColors = {
     '震災': Color(0xFFF2B186),
     '戦争': Color(0xFFB5C9A7),
@@ -116,6 +118,95 @@ class HomeMenuCard extends StatelessWidget {
 
             const Spacer(flex: 2),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+//カテゴリの3×2表示・選択
+class CategorySelect extends StatefulWidget {
+  // 単一選択なら String、複数選択なら List<String> を扱う
+  final Function(dynamic) onChanged;
+  final bool isMultiSelect;
+  final List<String> initialSelected;
+
+  const CategorySelect({
+    super.key,
+    required this.onChanged,
+    this.isMultiSelect = false,
+    this.initialSelected = const [],
+  });
+
+  @override
+  State<CategorySelect> createState() => _CategorySelectState();
+}
+
+class _CategorySelectState extends State<CategorySelect> {
+  List<String> selectedCategories = [];
+
+  @override
+  void initState() {
+    super.initState();
+    selectedCategories = List.from(widget.initialSelected);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return GridView.count(
+      padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+      shrinkWrap: true,
+      physics: const NeverScrollableScrollPhysics(),
+      crossAxisCount: 3,
+      mainAxisSpacing: 20,
+      crossAxisSpacing: 20,
+      childAspectRatio: 2.5,
+      children: AppColors.categoryColors.entries.map((entry) {
+        return categoryButton(entry.key, entry.value);
+      }).toList(),
+    );
+  }
+
+  Widget categoryButton(String label, Color color) {
+    final bool isSelected = selectedCategories.contains(label);
+
+    return GestureDetector(
+      onTap: () {
+        setState(() {
+          if (widget.isMultiSelect) {
+            // 複数選択モード
+            if (isSelected) {
+              selectedCategories.remove(label);
+            } else {
+              selectedCategories.add(label);
+            }
+            widget.onChanged(selectedCategories); // リストを返す
+          } else {
+            // 単一選択モード
+            if (isSelected) {
+              selectedCategories.clear();
+              widget.onChanged(''); // 空文字を返す
+            } else {
+              selectedCategories = [label];
+              widget.onChanged(label); // 文字列を返す
+            }
+          }
+        });
+      },
+      child: Container(
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color: isSelected ? color : Colors.white,
+          border: Border.all(color: color, width: 2.5),
+          borderRadius: BorderRadius.circular(8),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 25,
+            color: isSelected ? Colors.white : AppColors.mainBrown,
+            fontWeight: FontWeight.bold,
+          ),
         ),
       ),
     );

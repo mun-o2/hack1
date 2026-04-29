@@ -54,7 +54,7 @@ class StudentHomeScreen extends StatelessWidget {
                 label: '思い出',
                 subLabel: 'お話の記録を見る',
                 onTap: () => context.push('/student/memory'),
-                icon: Icons.photo,
+                icon: Icons.auto_stories,
                 themeColor: AppColors.accentYellow,
               ),
 
@@ -64,7 +64,7 @@ class StudentHomeScreen extends StatelessWidget {
                 label: '設定',
                 subLabel: 'アカウント設定',
                 onTap: () => context.push('/student/setting'),
-                icon: Icons.settings,
+                icon: Icons.manage_accounts_outlined,
                 themeColor: AppColors.accentGreen,
               ),
             ],

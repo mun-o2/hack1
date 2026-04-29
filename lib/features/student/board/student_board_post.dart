@@ -1,6 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'board_category_select.dart';
 import 'board_writing_space.dart';
 import 'package:flutter/material.dart';
 import 'package:hack1/features/materials.dart';
@@ -92,15 +91,20 @@ class _StudentBoardPostState extends ConsumerState<StudentBoardPost> {
           BoardWritingSpace(onChanged: (text) => _enteredText = text),
           const SizedBox(height: 10),
           // カテゴリ選択
-          BoardCategorySelect(
-            onChanged: (category) => _selectedCategory = category,
+          CategorySelect(
+            isMultiSelect: false, // 単一選択
+            onChanged: (category) {
+              setState(() {
+                _selectedCategory = category as String; // Stringとして受け取る
+              });
+            },
           ),
         ],
       ),
     );
   }
 
-  // 警告メッセージを
+  // 警告メッセージ
   void _showCustomToast(BuildContext context, String message) {
     final overlay = Overlay.of(context);
     final overlayEntry = OverlayEntry(
