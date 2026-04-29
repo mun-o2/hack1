@@ -53,6 +53,75 @@ class Post {
   Post({required this.category, required this.dateTime, required this.content});
 }
 
+//ホーム画面の各ボタン
+class HomeMenuCard extends StatelessWidget {
+  final String label;
+  final String subLabel;
+  final VoidCallback onTap;
+  final IconData icon;
+  final Color themeColor;
+
+  const HomeMenuCard({
+    super.key,
+    required this.label,
+    required this.subLabel,
+    required this.onTap,
+    required this.icon,
+    required this.themeColor,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return InkWell(
+      borderRadius: BorderRadius.circular(12),
+      onTap: onTap,
+      child: Container(
+        width: double.infinity,
+        height: 115,
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: themeColor, width: 3),
+        ),
+        padding: const EdgeInsets.symmetric(horizontal: 36),
+        child: Row(
+          children: [
+            Icon(icon, size: 70, color: themeColor),
+
+            const SizedBox(width: 40),
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    label,
+                    style: const TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.mainBrown,
+                    ),
+                  ),
+                  Text(
+                    subLabel,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: AppColors.mainBrown,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+
+            const Spacer(flex: 2),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class AppAssets {
   //芝生画像
   static const String glass = 'assets/images/glass.png';
