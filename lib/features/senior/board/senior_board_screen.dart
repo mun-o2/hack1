@@ -1,27 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hack1/features/materials.dart';
 
-class SeniorBoardScreen extends StatefulWidget {
+class SeniorBoardScreen extends ConsumerStatefulWidget {
   const SeniorBoardScreen({super.key});
 
   @override
-  State<SeniorBoardScreen> createState() => _SeniorBoardScreenState();
+  ConsumerState<SeniorBoardScreen> createState() => _SeniorBoardScreenState();
 }
 
-class _SeniorBoardScreenState extends State<SeniorBoardScreen> {
+class _SeniorBoardScreenState extends ConsumerState<SeniorBoardScreen> {
   // 現在選択されているカテゴリを保存する変数
   String? selectedCategory;
 
-  //カテゴリごとの色を定義
-  static const Map<String, Color> categoryColors = {
-    '震災': Color(0xFFF2B186),
-    '戦争': Color(0xFFB5C9A7),
-    '人生': Color(0xFF6B4E3D),
-    '恋愛': Color(0xFFF4A5B1),
-    '雑談': Color(0xFFFAD28E),
-    'その他': Color(0xFF2A5AB0),
-  };
   @override
   Widget build(BuildContext context) {
+    final posts = ref.watch(postListProvider);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -29,15 +24,15 @@ class _SeniorBoardScreenState extends State<SeniorBoardScreen> {
           style: TextStyle(
             fontSize: 28,
             fontWeight: FontWeight.bold,
-            color: Color(0xFF6B4E3D),
+            color: AppColors.mainBrown,
           ),
         ),
         centerTitle: true,
-        backgroundColor: const Color(0xFFFEF8F1),
+        backgroundColor: AppColors.backgroundBeige,
         elevation: 0,
         scrolledUnderElevation: 0,
       ),
-      backgroundColor: const Color(0xFFFEF8F1),
+      backgroundColor: AppColors.backgroundBeige,
       body: Column(
         children: [
           //カテゴリフィルター
@@ -45,43 +40,25 @@ class _SeniorBoardScreenState extends State<SeniorBoardScreen> {
             scrollDirection: Axis.horizontal, // 横にスクロール
             padding: const EdgeInsets.fromLTRB(10, 25, 0, 0),
             child: Row(
-              children: categoryColors.keys.map((category) {
+              children: AppColors.categoryColors.keys.map((category) {
                 return _buildCategoryButton(category);
               }).toList(),
             ),
           ),
           const SizedBox(height: 10),
           Expanded(
-            child: ListView(
-              padding: const EdgeInsets.symmetric(vertical: 10),
-              children: [
-                if (selectedCategory == null || selectedCategory == '震災')
-                  postCard(
-                    '震災',
-                    '4/21 17:00~18:00',
-                    '東日本大震災についてのお話をぜひ聴かせていただきたいです。',
-                  ),
+            child: ListView.builder(
+              itemCount: posts.length,
+              itemBuilder: (context, index) {
+                final post = posts[index];
 
-                if (selectedCategory == null || selectedCategory == '戦争')
-                  postCard(
-                    '戦争',
-                    '4/30 12:00~18:00',
-                    '戦争についてのお話をぜひ聴かせていただきたいです。',
-                  ),
-
-                if (selectedCategory == null || selectedCategory == '恋愛')
-                  postCard(
-                    '恋愛',
-                    '4/18 17:00~20:00',
-                    '好きな人についてのお話をぜひ聴かせていただきたいです。',
-                  ),
-
-                if (selectedCategory == null || selectedCategory == '人生')
-                  postCard('人生', '4/29 19:00~21:00', '予備投稿'),
-
-                if (selectedCategory == null || selectedCategory == 'その他')
-                  postCard('その他', '4/16 12:00~17:00', '予備投稿'),
-              ],
+                // カテゴリフィルターがかかっている場合の処理
+                if (selectedCategory != null &&
+                    post.category != selectedCategory) {
+                  return const SizedBox.shrink(); // 一致しなければ表示しない
+                }
+                return postCard(post.category, post.dateTime, post.content);
+              },
             ),
           ),
         ],
@@ -91,7 +68,7 @@ class _SeniorBoardScreenState extends State<SeniorBoardScreen> {
 
   // カテゴリボタンを作るパーツ
   Widget _buildCategoryButton(String category) {
-    final Color themeColor = categoryColors[category] ?? Colors.grey;
+    final Color themeColor = AppColors.getCategoryColor(category);
 
     // selectedCategory が null でない、かつ今のカテゴリと一致しているか
     final bool isSelected = selectedCategory == category;
@@ -102,10 +79,10 @@ class _SeniorBoardScreenState extends State<SeniorBoardScreen> {
         onPressed: () {
           setState(() {
             if (isSelected) {
-              // 1. すでに選択されているボタンをもう一度押したら解除（nullにする）
+              // すでに選択されているボタンをもう一度押したら解除（nullにする）
               selectedCategory = null;
             } else {
-              // 2. それ以外（未選択 or 別のボタン）を押したら、そのカテゴリを選択
+              // それ以外（未選択 or 別のボタン）を押したら、そのカテゴリを選択
               selectedCategory = category;
             }
           });
@@ -114,7 +91,7 @@ class _SeniorBoardScreenState extends State<SeniorBoardScreen> {
           // 背景色：選択中ならカテゴリ色、そうでなければ白
           backgroundColor: isSelected ? themeColor : Colors.white,
           // 文字色：選択中なら白、そうでなければブラウン
-          foregroundColor: isSelected ? Colors.white : const Color(0xFF6B4E3D),
+          foregroundColor: isSelected ? Colors.white : AppColors.mainBrown,
           side: BorderSide(color: themeColor, width: 2.0),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
@@ -130,7 +107,7 @@ class _SeniorBoardScreenState extends State<SeniorBoardScreen> {
   // 各投稿のパーツ
   Widget postCard(String category, String dateTime, String content) {
     // カテゴリに応じた色を取得
-    final Color themeColor = categoryColors[category] ?? Colors.grey;
+    final Color themeColor = AppColors.getCategoryColor(category);
 
     return Container(
       width: 340,
@@ -139,7 +116,7 @@ class _SeniorBoardScreenState extends State<SeniorBoardScreen> {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: const Color(0xFF6B4E3D), width: 2),
+        border: Border.all(color: AppColors.mainBrown, width: 2),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -172,7 +149,7 @@ class _SeniorBoardScreenState extends State<SeniorBoardScreen> {
               Text(
                 dateTime,
                 style: const TextStyle(
-                  color: Color(0xFF6B4E3D),
+                  color: AppColors.mainBrown,
                   fontSize: 20, // 文字サイズを大きく
                   fontWeight: FontWeight.bold,
                 ),
@@ -187,7 +164,7 @@ class _SeniorBoardScreenState extends State<SeniorBoardScreen> {
             overflow: TextOverflow.ellipsis,
             style: const TextStyle(
               fontSize: 20,
-              color: Color(0xFF6B4E3D),
+              color: AppColors.mainBrown,
               fontWeight: FontWeight.bold,
             ),
           ),

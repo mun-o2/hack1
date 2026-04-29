@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:hack1/features/materials.dart';
 
 class StudentBottomNavBar extends StatelessWidget {
   final int selectedIndex;
@@ -10,7 +11,7 @@ class StudentBottomNavBar extends StatelessWidget {
     required this.onTap,
   });
 
-  static const Color activeColor = Color(0xFFE57A2F);
+  static const Color activeColor = AppColors.accentPink;
   static const Color selectedBgColor = Color(0xFFF3EEE9);
 
   @override

@@ -18,7 +18,7 @@ class _StudentMainTabState extends State<StudentMainTab> {
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> _pages = const [
+    final List<Widget> pages = const [
       StudentHomeScreen(),
       StudentBoardScreen(),
       StudentMemoryScreen(),
@@ -26,7 +26,9 @@ class _StudentMainTabState extends State<StudentMainTab> {
     ];
 
     return Scaffold(
-      body: _pages[_selectedIndex],
+      body: pages[_selectedIndex],
+      //ロール選択に戻るボタンを左下に移動させました
+      floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       floatingActionButton: FloatingActionButton(
         // Navigate to the onboarding screen
         onPressed: () {
