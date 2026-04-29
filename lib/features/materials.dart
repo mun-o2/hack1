@@ -25,6 +25,9 @@ class AppColors {
   static const Color accentPink = Color(0xFFF4A5B1);
   static const Color backgroundBeige = Color(0xFFFEF8F1);
 
+  static const Color accentYellow = Color(0xFFFAD28E);
+  static const Color accentGreen = Color(0xFFB5C9A7);
+
   // カテゴリごとの色をMapで一括管理
   static const Map<String, Color> categoryColors = {
     '震災': Color(0xFFF2B186),
