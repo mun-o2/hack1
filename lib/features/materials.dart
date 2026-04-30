@@ -58,7 +58,7 @@ class AppColors {
 }
 
 // trueなら「見やすい」、falseなら「かわいい」
-final isHighContrastProvider = StateProvider<bool>((ref) => false);
+final isHighContrastProvider = StateProvider<bool>((ref) => true);
 
 // 現在のカラーセットを返すプロバイダー
 final colorThemeProvider = Provider((ref) {

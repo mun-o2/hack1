@@ -19,9 +19,8 @@ class _StudentBoardScreenState extends ConsumerState<StudentBoardScreen> {
   Widget build(BuildContext context) {
     final posts = ref.watch(postListProvider);
 
-    final Map<String, dynamic> theme = ref.watch(colorThemeProvider);
-    final Map<String, Color> categoryColors =
-        theme['categories'] as Map<String, Color>;
+    //若者側はかわいいカラーで固定
+    final categoryColors = AppColors.pastelCategoryColors;
 
     Image.asset(AppAssets.glass);
 
@@ -111,10 +110,10 @@ class _StudentBoardScreenState extends ConsumerState<StudentBoardScreen> {
         onPressed: () {
           setState(() {
             if (isSelected) {
-              // 1. すでに選択されているボタンをもう一度押したら解除（nullにする）
+              // すでに選択されているボタンをもう一度押したら解除（nullにする）
               selectedCategory = null;
             } else {
-              // 2. それ以外（未選択 or 別のボタン）を押したら、そのカテゴリを選択
+              // それ以外（未選択 or 別のボタン）を押したら、そのカテゴリを選択
               selectedCategory = category;
             }
           });
@@ -126,7 +125,7 @@ class _StudentBoardScreenState extends ConsumerState<StudentBoardScreen> {
           foregroundColor: isSelected ? Colors.white : AppColors.mainBrown,
           side: BorderSide(color: themeColor, width: 2.0),
           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
         ),
         child: Text(
           category,

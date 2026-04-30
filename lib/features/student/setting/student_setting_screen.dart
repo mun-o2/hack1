@@ -16,9 +16,6 @@ class _StudentSettingScreenState extends ConsumerState<StudentSettingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = ref.watch(colorThemeProvider);
-    final categoryColors = theme['categories'] as Map<String, Color>;
-
     return SettingScreen(
       additionalSettingContent: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -35,7 +32,7 @@ class _StudentSettingScreenState extends ConsumerState<StudentSettingScreen> {
           CategorySelect(
             isMultiSelect: true, // 複数選択
             initialSelected: _mySelectedList, // すでに保存されているリストがあれば渡す
-            categoryColors: categoryColors,
+            categoryColors: AppColors.pastelCategoryColors,
             onChanged: (list) {
               setState(() {
                 _mySelectedList = list as List<String>; // Listとして受け取る
