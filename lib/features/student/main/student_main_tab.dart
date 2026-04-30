@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hack1/features/materials.dart';
 import 'package:hack1/features/student/board/student_board_screen.dart';
 import 'package:hack1/features/student/home/student_home_screen.dart';
 import 'package:hack1/features/student/main/widgets/nav_bar.dart';
@@ -26,8 +27,10 @@ class _StudentMainTabState extends State<StudentMainTab> {
     ];
 
     return Scaffold(
+      backgroundColor: AppColors.backgroundBeige,
       body: pages[_selectedIndex],
-      //ƒ[ƒ‹‘I‘ğ‚É–ß‚éƒ{ƒ^ƒ“‚ğ¶‰º‚ÉˆÚ“®‚³‚¹‚Ü‚µ‚½
+
+      //ï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½Iï¿½ï¿½ï¿½É–ß‚ï¿½{ï¿½^ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÉˆÚ“ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½ï¿½
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       floatingActionButton: FloatingActionButton(
         // Navigate to the onboarding screen
@@ -36,6 +39,7 @@ class _StudentMainTabState extends State<StudentMainTab> {
         },
         child: const Icon(Icons.home),
       ),
+
       bottomNavigationBar: StudentBottomNavBar(
         selectedIndex: _selectedIndex,
         onTap: (index) {
