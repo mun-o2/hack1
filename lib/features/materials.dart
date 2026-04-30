@@ -1,6 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
+//-----------------------------------------------------------------
+//掲示板投稿のデータモデル
+class Post {
+  final String category;
+  final String dateTime;
+  final String content;
+
+  Post({required this.category, required this.dateTime, required this.content});
+}
+
 // 投稿リストの状態を管理するクラス
 class PostListNotifier extends StateNotifier<List<Post>> {
   PostListNotifier() : super([]); // 最初は空リスト
@@ -19,6 +29,52 @@ final postListProvider = StateNotifierProvider<PostListNotifier, List<Post>>((
   return PostListNotifier();
 });
 
+//-----------------------------------------------------------------
+//思い出のデータモデル
+class Memory {
+  final String partnerName;
+  final String category;
+  final String dateTime;
+  final String icon;
+
+  Memory({
+    required this.partnerName,
+    required this.category,
+    required this.dateTime,
+    required this.icon,
+  });
+}
+
+final memoryListProvider = Provider<List<Memory>>((ref) {
+  return [
+    Memory(
+      partnerName: 'はるかさん',
+      category: '震災',
+      dateTime: '4/28 17:00~17:30',
+      icon: 'assets/icons/pink-girl.png',
+    ),
+    Memory(
+      partnerName: 'さとうさん',
+      category: '戦争',
+      dateTime: '4/25 17:00~17:30',
+      icon: 'assets/icons/blue-boy.png',
+    ),
+    Memory(
+      partnerName: 'すずきさん',
+      category: '雑談',
+      dateTime: '4/20 17:00~17:30',
+      icon: 'assets/icons/pink-girl.png',
+    ),
+    Memory(
+      partnerName: 'たなかさん',
+      category: '人生',
+      dateTime: '4/18 17:00~17:30',
+      icon: 'assets/icons/blue-boy.png',
+    ),
+  ];
+});
+
+//-----------------------------------------------------------------
 //使用カラー管理
 class AppColors {
   // メインのテーマカラーなど
@@ -76,15 +132,7 @@ final colorThemeProvider = Provider((ref) {
   };
 });
 
-//掲示板の投稿１つ分
-class Post {
-  final String category;
-  final String dateTime;
-  final String content;
-
-  Post({required this.category, required this.dateTime, required this.content});
-}
-
+//-----------------------------------------------------------------
 //ホーム画面の各ボタン
 class HomeMenuCard extends StatelessWidget {
   final String label;
@@ -152,6 +200,7 @@ class HomeMenuCard extends StatelessWidget {
   }
 }
 
+//-----------------------------------------------------------------
 //カテゴリの3×2表示・選択
 class CategorySelect extends StatefulWidget {
   // 単一選択なら String、複数選択なら List<String> を扱う
@@ -238,6 +287,69 @@ class _CategorySelectState extends State<CategorySelect> {
             fontWeight: FontWeight.bold,
           ),
         ),
+      ),
+    );
+  }
+}
+
+//-----------------------------------------------------------------
+//カテゴリフィルター（掲示板、思い出）
+class CategoryFilter extends StatelessWidget {
+  final String? selectedCategory;
+  final Function(String?) onCategorySelected;
+
+  const CategoryFilter({
+    super.key,
+    required this.selectedCategory,
+    required this.onCategorySelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final categoryColors = AppColors.pastelCategoryColors;
+
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.fromLTRB(10, 25, 0, 0),
+      child: Row(
+        children: categoryColors.keys.map((category) {
+          final Color themeColor = AppColors.getCategoryColor(
+            category,
+            categoryColors,
+          );
+          final bool isSelected = selectedCategory == category;
+
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: OutlinedButton(
+              onPressed: () {
+                // すでに選択中なら解除(null)、そうでなければ選択(category)
+                onCategorySelected(isSelected ? null : category);
+              },
+              style: OutlinedButton.styleFrom(
+                backgroundColor: isSelected ? themeColor : Colors.white,
+                foregroundColor: isSelected
+                    ? Colors.white
+                    : AppColors.mainBrown,
+                side: BorderSide(color: themeColor, width: 2.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 40,
+                  vertical: 12,
+                ),
+              ),
+              child: Text(
+                category,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          );
+        }).toList(),
       ),
     );
   }

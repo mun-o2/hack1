@@ -1,46 +1,27 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hack1/features/materials.dart';
 
-// データモデル
-class Memory {
-  final String partnerName;
-  final String category;
-  final String dateTime;
-
-  Memory({
-    required this.partnerName,
-    required this.category,
-    required this.dateTime,
-  });
-}
-
-// ダミーデータ
-final List<Memory> dummyMemories = [
-  Memory(partnerName: 'はるかさん', category: '震災', dateTime: '4/28 17:00~17:30'),
-  Memory(partnerName: 'さとうさん', category: '戦争', dateTime: '4/25 17:00~17:30'),
-  Memory(partnerName: 'すずきさん', category: '雑談', dateTime: '4/20 17:00~17:30'),
-  Memory(partnerName: 'たなかさん', category: '人生', dateTime: '4/18 17:00~17:30'),
-];
-
-class StudentMemoryScreen extends StatefulWidget {
+class StudentMemoryScreen extends ConsumerStatefulWidget {
   const StudentMemoryScreen({super.key});
 
   @override
-  State<StudentMemoryScreen> createState() => _StudentMemoryScreenState();
+  ConsumerState<StudentMemoryScreen> createState() =>
+      _StudentMemoryScreenState();
 }
 
-class _StudentMemoryScreenState extends State<StudentMemoryScreen> {
+class _StudentMemoryScreenState extends ConsumerState<StudentMemoryScreen> {
   // 掲示板と同じく、選択中のカテゴリを管理（最初はnull＝すべて表示、または特定のカテゴリ）
   String? selectedCategory;
 
   @override
   Widget build(BuildContext context) {
+    final memories = ref.watch(memoryListProvider);
     final categoryColors = AppColors.pastelCategoryColors;
 
-    // フィルタリングされたリスト
     final filteredMemories = selectedCategory == null
-        ? dummyMemories
-        : dummyMemories.where((m) => m.category == selectedCategory).toList();
+        ? memories
+        : memories.where((m) => m.category == selectedCategory).toList();
 
     return Scaffold(
       appBar: AppBar(
@@ -61,28 +42,29 @@ class _StudentMemoryScreenState extends State<StudentMemoryScreen> {
       backgroundColor: AppColors.backgroundBeige,
       body: Column(
         children: [
-          // --- カテゴリフィルター（掲示板と全く同じ構造） ---
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            padding: const EdgeInsets.fromLTRB(10, 25, 0, 0),
-            child: Row(
-              children: categoryColors.keys.map((category) {
-                return _buildCategoryButton(category, categoryColors);
-              }).toList(),
-            ),
+          // カテゴリフィルター呼び出し
+          CategoryFilter(
+            selectedCategory: selectedCategory,
+            onCategorySelected: (category) {
+              setState(() {
+                selectedCategory = category;
+              });
+            },
           ),
           const SizedBox(height: 10),
 
-          // --- 思い出リスト ---
+          // 思い出リスト
           Expanded(
             child: ListView.builder(
-              itemCount: filteredMemories.length,
+              itemCount: filteredMemories.length, // Providerからのデータ数
               itemBuilder: (context, index) {
                 final memory = filteredMemories[index];
+
                 return _memoryCard(
                   memory.partnerName,
                   memory.category,
                   memory.dateTime,
+                  memory.icon,
                   categoryColors,
                 );
               },
@@ -93,39 +75,12 @@ class _StudentMemoryScreenState extends State<StudentMemoryScreen> {
     );
   }
 
-  // カテゴリボタン（掲示板のコードをそのまま採用）
-  Widget _buildCategoryButton(String category, Map<String, Color> colorSet) {
-    final Color themeColor = AppColors.getCategoryColor(category, colorSet);
-    final bool isSelected = selectedCategory == category;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: OutlinedButton(
-        onPressed: () {
-          setState(() {
-            selectedCategory = isSelected ? null : category;
-          });
-        },
-        style: OutlinedButton.styleFrom(
-          backgroundColor: isSelected ? themeColor : Colors.white,
-          foregroundColor: isSelected ? Colors.white : AppColors.mainBrown,
-          side: BorderSide(color: themeColor, width: 2.0),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-        ),
-        child: Text(
-          category,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        ),
-      ),
-    );
-  }
-
-  // 思い出カード（掲示板のスタイルをベースに、中身を組み替え）
+  // 思い出カード
   Widget _memoryCard(
     String partnerName,
     String category,
     String dateTime,
+    String icon,
     Map<String, Color> colorSet,
   ) {
     final Color themeColor = AppColors.getCategoryColor(category, colorSet);
@@ -140,25 +95,56 @@ class _StudentMemoryScreenState extends State<StudentMemoryScreen> {
         border: Border.all(color: AppColors.mainBrown, width: 2),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(
-            '$partnerNameとお話',
-            style: const TextStyle(
-              fontSize: 22,
-              color: AppColors.mainBrown,
-              fontWeight: FontWeight.bold,
-            ),
+          Row(
+            children: [
+              //アイコン
+              Container(
+                width: 59,
+                height: 59,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  color: AppColors.backgroundBeige,
+                  image: (icon.isNotEmpty)
+                      ? DecorationImage(
+                          image: AssetImage(icon),
+                          fit: BoxFit.cover,
+                        )
+                      : null,
+                ),
+                // 画像がない時に表示するデフォルトのアイコン
+                child: (icon.isEmpty)
+                    ? const Icon(
+                        Icons.person,
+                        color: AppColors.mainBrown,
+                        size: 30,
+                      )
+                    : null,
+              ),
+
+              const SizedBox(width: 26),
+
+              Text(
+                '$partnerNameとお話',
+                style: const TextStyle(
+                  fontSize: 20,
+                  color: AppColors.mainBrown,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ],
           ),
           const SizedBox(height: 24),
 
           Row(
             mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Container(
                 padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 6,
+                  horizontal: 22,
+                  vertical: 4,
                 ),
                 decoration: BoxDecoration(
                   color: themeColor,
@@ -174,7 +160,7 @@ class _StudentMemoryScreenState extends State<StudentMemoryScreen> {
                 ),
               ),
 
-              const SizedBox(width: 40),
+              const SizedBox(width: 37),
 
               Text(
                 dateTime,

@@ -39,15 +39,14 @@ class _SeniorBoardScreenState extends ConsumerState<SeniorBoardScreen> {
       backgroundColor: AppColors.backgroundBeige,
       body: Column(
         children: [
-          //カテゴリフィルター
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal, // 横にスクロール
-            padding: const EdgeInsets.fromLTRB(10, 25, 0, 0),
-            child: Row(
-              children: categoryColors.keys.map((category) {
-                return _buildCategoryButton(category, categoryColors);
-              }).toList(),
-            ),
+          // カテゴリフィルター呼び出し
+          CategoryFilter(
+            selectedCategory: selectedCategory,
+            onCategorySelected: (category) {
+              setState(() {
+                selectedCategory = category;
+              });
+            },
           ),
           const SizedBox(height: 10),
           Expanded(
