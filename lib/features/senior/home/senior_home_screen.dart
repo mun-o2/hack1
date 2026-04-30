@@ -1,12 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hack1/features/materials.dart';
 
-class SeniorHomeScreen extends StatelessWidget {
+class SeniorHomeScreen extends ConsumerWidget {
   const SeniorHomeScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // 現在の色セットを監視（watch）する
+    final theme = ref.watch(colorThemeProvider);
+
     return Scaffold(
+      backgroundColor: AppColors.backgroundBeige,
       floatingActionButton: FloatingActionButton(
         // Navigate to the onboarding screen
         onPressed: () {
@@ -19,100 +25,60 @@ class SeniorHomeScreen extends StatelessWidget {
           padding: const EdgeInsets.symmetric(horizontal: 31),
           child: Column(
             children: [
-              const SizedBox(height: 20),
+              const SizedBox(height: 60),
 
               // 上のお知らせバー(仮)
               Container(
                 width: double.infinity,
-                height: 60,
+                height: 130,
                 decoration: BoxDecoration(
-                  color: const Color(0xFF498854),
+                  color: Colors.white,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                alignment: Alignment.centerLeft,
+                alignment: Alignment.center,
                 padding: const EdgeInsets.symmetric(horizontal: 19),
                 child: const Text(
-                  '戦争について聞きたい人がいます',
+                  '今日は、どんなお話を\n聞いてみようかな？',
+                  textAlign: TextAlign.center,
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 20,
+                    color: AppColors.mainBrown,
+                    fontSize: 22,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
               ),
 
-              const SizedBox(height: 160),
+              const SizedBox(height: 55),
 
-              _SeniorMenuCard(
+              HomeMenuCard(
                 label: '掲示板',
+                subLabel: '若者の投稿を見る',
+                themeColor: theme['pink'] as Color,
                 onTap: () => context.push('/senior/board'),
                 icon: Icons.message,
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 34),
 
-              _SeniorMenuCard(
+              HomeMenuCard(
                 label: '思い出',
+                subLabel: 'お話の記録を見る',
+                themeColor: theme['yellow'] as Color,
                 onTap: () => context.push('/senior/memory'),
-                icon: Icons.photo,
+                icon: Icons.auto_stories,
               ),
 
-              const SizedBox(height: 24),
+              const SizedBox(height: 34),
 
-              _SeniorMenuCard(
+              HomeMenuCard(
                 label: '設定',
+                subLabel: 'アカウント設定',
+                themeColor: theme['green'] as Color,
                 onTap: () => context.push('/senior/setting'),
-                icon: Icons.settings,
+                icon: Icons.manage_accounts_outlined,
               ),
             ],
           ),
-        ),
-      ),
-    );
-  }
-}
-
-class _SeniorMenuCard extends StatelessWidget {
-  final String label;
-  final VoidCallback onTap;
-  final IconData icon;
-
-  const _SeniorMenuCard({
-    required this.label,
-    required this.onTap,
-    required this.icon,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      borderRadius: BorderRadius.circular(12),
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        height: 152,
-        decoration: BoxDecoration(
-          color: const Color(0xFFDE6A1D),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        padding: const EdgeInsets.symmetric(horizontal: 28),
-        child: Row(
-          children: [
-            Icon(icon, size: 48, color: Colors.white),
-
-            const Spacer(),
-
-            Text(
-              label,
-              style: const TextStyle(
-                fontSize: 36,
-                fontWeight: FontWeight.w700,
-                color: Colors.white,
-              ),
-            ),
-
-            const Spacer(flex: 2),
-          ],
         ),
       ),
     );
