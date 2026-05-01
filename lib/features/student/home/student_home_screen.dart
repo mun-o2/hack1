@@ -45,7 +45,7 @@ class StudentHomeScreen extends StatelessWidget {
                 HomeMenuCard(
                   label: '掲示板',
                   subLabel: '質問をする',
-                  onTap: () => context.push('/student/board'),
+                  onTap: () => context.go('/student/board'),
                   icon: Icons.message,
                   themeColor: AppColors.pastelPink,
                 ),
@@ -55,7 +55,7 @@ class StudentHomeScreen extends StatelessWidget {
                 HomeMenuCard(
                   label: '思い出',
                   subLabel: 'お話の記録を見る',
-                  onTap: () => context.push('/student/memory'),
+                  onTap: () => context.go('/student/memory'),
                   icon: Icons.auto_stories,
                   themeColor: AppColors.pastelYellow,
                 ),
@@ -65,7 +65,7 @@ class StudentHomeScreen extends StatelessWidget {
                 HomeMenuCard(
                   label: '設定',
                   subLabel: 'アカウント設定',
-                  onTap: () => context.push('/student/setting'),
+                  onTap: () => context.go('/student/setting'),
                   icon: Icons.manage_accounts_outlined,
                   themeColor: AppColors.pastelGreen,
                 ),
