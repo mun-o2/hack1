@@ -1,42 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hack1/features/materials.dart';
+import 'package:hack1/features/setting/base_background.dart';
 
-class SettingScreen extends StatefulWidget {
+class SettingScreen extends ConsumerStatefulWidget {
   final Widget? additionalSettingContent;
   //学生なら聞きたいジャンル設定、高齢者なら話せるジャンル設定と色変更が含まれる
 
   const SettingScreen({super.key, this.additionalSettingContent});
   @override
-  State<SettingScreen> createState() => _SettingScreenState();
+  ConsumerState<SettingScreen> createState() => _SettingScreenState();
 }
 
-class _SettingScreenState extends State<SettingScreen> {
+class _SettingScreenState extends ConsumerState<SettingScreen> {
   bool _isAccountView = false;
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: AppColors.backgroundBeige,
-      appBar: AppBar(
-        title: Text(
-          _isAccountView ? 'アカウント' : '設定',
-          style: const TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: AppColors.mainBrown,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.transparent,
-        elevation: 0,
-        leading: _isAccountView
-            ? IconButton(
-                icon: const Icon(Icons.arrow_back, color: AppColors.mainBrown),
-                onPressed: () => setState(() => _isAccountView = false),
-              )
-            : null,
-      ),
-      body: _isAccountView ? _accountSetting() : settingMenuList(),
+    final role = ref.watch(roleProvider);
+    final bool isStudent = (role == 'student');
+
+    return BaseBackground(
+      title: _isAccountView ? 'アカウント' : '設定',
+      leading: () {
+        //戻るボタンの有無判定
+        // 若者かつ設定画面なら、戻るボタン無
+        if (isStudent && !_isAccountView) {
+          return null;
+        }
+        // それ以外（高齢者すべて、または若者のアカウント画面）は戻るボタン有
+        return commonBackButton(
+          context,
+          onPressed: _isAccountView
+              ? () =>
+                    setState(() => _isAccountView = false) // アカウントなら設定に戻る
+              : null, // 高齢者の設定トップならホームに戻る
+        );
+      }(),
+      child: _isAccountView ? _accountSetting() : settingMenuList(),
     );
   }
 

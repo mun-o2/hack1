@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hack1/features/setting_screen.dart';
+import 'package:hack1/features/setting/setting_screen.dart';
 import 'package:hack1/features/materials.dart';
 
 class StudentSettingScreen extends ConsumerStatefulWidget {

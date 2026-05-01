@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hack1/features/materials.dart';
+import 'package:hack1/features/setting/base_background.dart';
 
 class SeniorMemoryScreen extends ConsumerStatefulWidget {
   const SeniorMemoryScreen({super.key});
@@ -24,24 +25,10 @@ class _SeniorMemoryScreenState extends ConsumerState<SeniorMemoryScreen> {
         ? memories
         : memories.where((m) => m.category == selectedCategory).toList();
 
-    return Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          '思い出',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: AppColors.mainBrown,
-          ),
-        ),
-        centerTitle: true,
-        automaticallyImplyLeading: false,
-        backgroundColor: AppColors.backgroundBeige,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-      ),
-      backgroundColor: AppColors.backgroundBeige,
-      body: Column(
+    return BaseBackground(
+      title: '思い出',
+      leading: commonBackButton(context),
+      child: Column(
         children: [
           // カテゴリフィルター呼び出し
           CategoryFilter(

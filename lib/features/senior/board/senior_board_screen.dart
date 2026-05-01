@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hack1/features/materials.dart';
+import 'package:hack1/features/setting/base_background.dart';
 
 class SeniorBoardScreen extends ConsumerStatefulWidget {
   const SeniorBoardScreen({super.key});
@@ -21,56 +22,46 @@ class _SeniorBoardScreenState extends ConsumerState<SeniorBoardScreen> {
     final Map<String, Color> categoryColors =
         theme['categories'] as Map<String, Color>;
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          '掲示板',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: AppColors.mainBrown,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: AppColors.backgroundBeige,
-        elevation: 0,
-        scrolledUnderElevation: 0,
-      ),
-      backgroundColor: AppColors.backgroundBeige,
-      body: Column(
-        children: [
-          // カテゴリフィルター呼び出し
-          CategoryFilter(
-            selectedCategory: selectedCategory,
-            onCategorySelected: (category) {
-              setState(() {
-                selectedCategory = category;
-              });
-            },
-            themeColors: categoryColors,
-          ),
-          const SizedBox(height: 10),
-          Expanded(
-            child: ListView.builder(
-              itemCount: posts.length,
-              itemBuilder: (context, index) {
-                final post = posts[index];
-
-                // カテゴリフィルターがかかっている場合の処理
-                if (selectedCategory != null &&
-                    post.category != selectedCategory) {
-                  return const SizedBox.shrink(); // 一致しなければ表示しない
-                }
-                return postCard(
-                  post.category,
-                  post.dateTime,
-                  post.content,
-                  categoryColors,
-                );
+    return BaseBackground(
+      title: '掲示板',
+      leading: commonBackButton(context),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: Column(
+          children: [
+            // カテゴリフィルター呼び出し
+            CategoryFilter(
+              selectedCategory: selectedCategory,
+              onCategorySelected: (category) {
+                setState(() {
+                  selectedCategory = category;
+                });
               },
+              themeColors: categoryColors,
             ),
-          ),
-        ],
+            const SizedBox(height: 10),
+            Expanded(
+              child: ListView.builder(
+                itemCount: posts.length,
+                itemBuilder: (context, index) {
+                  final post = posts[index];
+
+                  // カテゴリフィルターがかかっている場合の処理
+                  if (selectedCategory != null &&
+                      post.category != selectedCategory) {
+                    return const SizedBox.shrink(); // 一致しなければ表示しない
+                  }
+                  return postCard(
+                    post.category,
+                    post.dateTime,
+                    post.content,
+                    categoryColors,
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

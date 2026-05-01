@@ -1,6 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
+//ロール（若者or高齢者）を保持するプロバイダー
+final roleProvider = StateProvider<String>(
+  (ref) => 'student',
+); //今は一旦若者をデフォルトにしてます
+
 //-----------------------------------------------------------------
 //掲示板投稿のデータモデル
 class Post {
@@ -353,6 +358,15 @@ class CategoryFilter extends StatelessWidget {
       ),
     );
   }
+}
+
+//-----------------------------------------------------------------
+//左上の戻るボタン
+Widget commonBackButton(BuildContext context, {VoidCallback? onPressed}) {
+  return IconButton(
+    icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.mainBrown),
+    onPressed: onPressed ?? () => Navigator.of(context).pop(),
+  );
 }
 
 class AppAssets {
