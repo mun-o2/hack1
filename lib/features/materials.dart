@@ -297,25 +297,25 @@ class _CategorySelectState extends State<CategorySelect> {
 class CategoryFilter extends StatelessWidget {
   final String? selectedCategory;
   final Function(String?) onCategorySelected;
+  final Map<String, Color> themeColors;
 
   const CategoryFilter({
     super.key,
     required this.selectedCategory,
     required this.onCategorySelected,
+    required this.themeColors,
   });
 
   @override
   Widget build(BuildContext context) {
-    final categoryColors = AppColors.pastelCategoryColors;
-
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,
       padding: const EdgeInsets.fromLTRB(10, 25, 0, 0),
       child: Row(
-        children: categoryColors.keys.map((category) {
+        children: themeColors.keys.map((category) {
           final Color themeColor = AppColors.getCategoryColor(
             category,
-            categoryColors,
+            themeColors,
           );
           final bool isSelected = selectedCategory == category;
 

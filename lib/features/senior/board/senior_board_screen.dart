@@ -47,6 +47,7 @@ class _SeniorBoardScreenState extends ConsumerState<SeniorBoardScreen> {
                 selectedCategory = category;
               });
             },
+            themeColors: categoryColors,
           ),
           const SizedBox(height: 10),
           Expanded(
@@ -70,44 +71,6 @@ class _SeniorBoardScreenState extends ConsumerState<SeniorBoardScreen> {
             ),
           ),
         ],
-      ),
-    );
-  }
-
-  // カテゴリボタンを作るパーツ
-  Widget _buildCategoryButton(String category, Map<String, Color> colorSet) {
-    final Color themeColor = AppColors.getCategoryColor(category, colorSet);
-
-    // selectedCategory が null でない、かつ今のカテゴリと一致しているか
-    final bool isSelected = selectedCategory == category;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: OutlinedButton(
-        onPressed: () {
-          setState(() {
-            if (isSelected) {
-              // すでに選択されているボタンをもう一度押したら解除（nullにする）
-              selectedCategory = null;
-            } else {
-              // それ以外（未選択 or 別のボタン）を押したら、そのカテゴリを選択
-              selectedCategory = category;
-            }
-          });
-        },
-        style: OutlinedButton.styleFrom(
-          // 背景色：選択中ならカテゴリ色、そうでなければ白
-          backgroundColor: isSelected ? themeColor : Colors.white,
-          // 文字色：選択中なら白、そうでなければブラウン
-          foregroundColor: isSelected ? Colors.white : AppColors.mainBrown,
-          side: BorderSide(color: themeColor, width: 2.0),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 12),
-        ),
-        child: Text(
-          category,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        ),
       ),
     );
   }

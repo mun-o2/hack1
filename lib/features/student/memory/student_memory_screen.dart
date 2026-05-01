@@ -50,6 +50,7 @@ class _StudentMemoryScreenState extends ConsumerState<StudentMemoryScreen> {
                 selectedCategory = category;
               });
             },
+            themeColors: AppColors.pastelCategoryColors,
           ),
           const SizedBox(height: 10),
 

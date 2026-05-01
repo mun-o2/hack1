@@ -50,6 +50,7 @@ class _StudentBoardScreenState extends ConsumerState<StudentBoardScreen> {
                 selectedCategory = category;
               });
             },
+            themeColors: AppColors.pastelCategoryColors,
           ),
           const SizedBox(height: 10),
           Expanded(
