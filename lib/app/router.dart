@@ -1,4 +1,5 @@
 import 'package:go_router/go_router.dart';
+import 'package:hack1/features/onboarding/initial_setting_screen.dart';
 import 'package:hack1/features/onboarding/onboarding_screen.dart';
 import 'package:hack1/features/onboarding/role_select_screen.dart';
 import 'package:hack1/features/splash/splash_screen.dart';
@@ -26,6 +27,14 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/role',
       builder: (context, state) => const RoleSelectScreen(),
+    ),
+    GoRoute(
+      path: '/initial/student',
+      builder: (context, state) => const InitialSettingScreen(isSenior: false),
+    ),
+    GoRoute(
+      path: '/initial/senior',
+      builder: (context, state) => const InitialSettingScreen(isSenior: true),
     ),
     GoRoute(
       path: '/student',

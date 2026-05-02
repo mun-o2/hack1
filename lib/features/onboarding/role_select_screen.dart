@@ -9,22 +9,6 @@ class RoleSelectScreen extends StatefulWidget {
 }
 
 class _RoleSelectScreenState extends State<RoleSelectScreen> {
-  String? _selectedRole;
-
-  void _selectRole(String role) {
-    setState(() {
-      _selectedRole = role;
-    });
-  }
-
-  void _onNext() {
-    if (_selectedRole == 'senior') {
-      context.go('/senior');
-    } else if (_selectedRole == 'student') {
-      context.go('/student');
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -48,74 +32,15 @@ class _RoleSelectScreenState extends State<RoleSelectScreen> {
               _buildRoleButton(
                 label: '高齢者として',
                 backgroundColor: const Color(0xFFB7C7A6),
-                selected: _selectedRole == 'senior',
-                onTap: () => _selectRole('senior'),
+                onTap: () => context.go('/initial/senior'),
               ),
               const SizedBox(height: 24),
               _buildRoleButton(
                 label: '若者として',
                 backgroundColor: const Color(0xFFF1CC84),
-                selected: _selectedRole == 'student',
-                onTap: () => _selectRole('student'),
+                onTap: () => context.go('/initial/student'),
               ),
-              const Spacer(),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Row(
-                    children: [
-                      Container(
-                        width: 16,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFF2E2F45),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      const SizedBox(width: 8),
-                      Container(
-                        width: 8,
-                        height: 8,
-                        decoration: BoxDecoration(
-                          color: const Color(0xFFD9D9D9),
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                    ],
-                  ),
-                  ElevatedButton(
-                    onPressed: _selectedRole == null ? null : _onNext,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: const Color(0xFFF2A3AB),
-                      disabledBackgroundColor: const Color(0xFFE9C2C8),
-                      shape: const StadiumBorder(),
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 22,
-                        vertical: 14,
-                      ),
-                      elevation: 0,
-                    ),
-                    child: const Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Text(
-                          '次へ',
-                          style: TextStyle(
-                            color: Colors.white,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        SizedBox(width: 8),
-                        Icon(
-                          Icons.arrow_forward,
-                          color: Colors.white,
-                          size: 18,
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+              const SizedBox(height: 24),
             ],
           ),
         ),
@@ -126,27 +51,16 @@ class _RoleSelectScreenState extends State<RoleSelectScreen> {
   Widget _buildRoleButton({
     required String label,
     required Color backgroundColor,
-    required bool selected,
     required VoidCallback onTap,
   }) {
     return GestureDetector(
       onTap: onTap,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
+      child: Container(
         width: double.infinity,
         height: 88,
         decoration: BoxDecoration(
-          color: selected ? backgroundColor.withOpacity(0.95) : backgroundColor,
+          color: backgroundColor,
           borderRadius: BorderRadius.circular(30),
-          boxShadow: selected
-              ? [
-                  BoxShadow(
-                    color: Colors.black.withOpacity(0.08),
-                    blurRadius: 12,
-                    offset: const Offset(0, 6),
-                  ),
-                ]
-              : null,
         ),
         child: Center(
           child: Text(
