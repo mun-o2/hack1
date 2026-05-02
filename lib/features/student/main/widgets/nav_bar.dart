@@ -30,6 +30,7 @@ class StudentBottomNavBar extends StatelessWidget {
                 borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
               ),
               child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _NavItem(
                     index: 0,
@@ -88,20 +89,14 @@ class _NavItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final bool isSelected = index == selectedIndex;
 
-    return Expanded(
+    return SizedBox(
+      width: 100,
       child: InkWell(
         borderRadius: BorderRadius.circular(14),
         onTap: () => onTap(index),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          curve: Curves.easeOut,
-          margin: const EdgeInsets.symmetric(horizontal: 6, vertical: 8),
-          decoration: BoxDecoration(
-            color: isSelected
-                ? StudentBottomNavBar.selectedBgColor
-                : Colors.transparent,
-            borderRadius: BorderRadius.circular(14),
-          ),
+        child: Container(
+          margin: const EdgeInsets.symmetric(horizontal: 2, vertical: 8),
+          decoration: const BoxDecoration(color: Colors.transparent),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
@@ -116,7 +111,7 @@ class _NavItem extends StatelessWidget {
               Text(
                 label,
                 style: TextStyle(
-                  fontSize: 15,
+                  fontSize: 18,
                   fontWeight: FontWeight.w700,
                   color: isSelected
                       ? StudentBottomNavBar.activeColor

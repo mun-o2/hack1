@@ -56,22 +56,26 @@ class _SeniorSettingScreenState extends ConsumerState<SeniorSettingScreen> {
             ),
           ),
           const SizedBox(height: 8),
-          _colorModeButton(
-            label: '見やすい',
-            color: Color(0xFF55508B),
-            isSelected: isHighContrast,
-            onTap: () {
-              ref.read(isHighContrastProvider.notifier).state = true;
-            },
-          ),
-          const SizedBox(height: 12),
-          _colorModeButton(
-            label: 'かわいい',
-            color: Color(0xFFF2B186),
-            isSelected: !isHighContrast,
-            onTap: () {
-              ref.read(isHighContrastProvider.notifier).state = false;
-            },
+          Row(
+            children: [
+              _colorModeButton(
+                label: 'はっきり',
+                color: Color(0xFF55508B),
+                isSelected: isHighContrast,
+                onTap: () {
+                  ref.read(isHighContrastProvider.notifier).state = true;
+                },
+              ),
+              const SizedBox(width: 12),
+              _colorModeButton(
+                label: 'パステル',
+                color: Color(0xFFF2B186),
+                isSelected: !isHighContrast,
+                onTap: () {
+                  ref.read(isHighContrastProvider.notifier).state = false;
+                },
+              ),
+            ],
           ),
         ],
       ),

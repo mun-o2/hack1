@@ -85,13 +85,79 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
 
   // アカウント（共通項目 + 追加項目）
   Widget _accountSetting() {
+    //現在のアイコン背景色
+    final currentIconColor = ref.watch(iconBgColorProvider);
+
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start, // テキストを左寄せに
         children: [
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
+          //ユーザアイコン
+          Center(
+            child: SizedBox(
+              width: 125,
+              height: 125,
+              child: Stack(
+                clipBehavior: Clip.none,
+                children: [
+                  // アイコン
+                  Container(
+                    width: 125,
+                    height: 125,
+                    decoration: BoxDecoration(
+                      shape: BoxShape.circle,
 
+                      color: currentIconColor,
+                      image: const DecorationImage(
+                        image: AssetImage('assets/icons/girl.png'),
+                        fit: BoxFit.cover,
+                      ),
+                    ),
+                    child: ClipOval(
+                      child: Image.asset(
+                        'assets/icons/girl.png',
+                        fit: BoxFit.contain,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              const Icon(Icons.error, color: Colors.red),
+                              Text(
+                                error.toString(), //ファイルが見つからない等エラー確認用
+                                style: const TextStyle(fontSize: 8),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    bottom: 0,
+                    right: -20,
+                    child: GestureDetector(
+                      onTap: () => _showColorPicker(context), // 背景色選択を呼ぶ
+                      child: Container(
+                        padding: const EdgeInsets.all(6),
+                        decoration: const BoxDecoration(
+                          color: Colors.transparent,
+                          shape: BoxShape.circle,
+                        ),
+                        child: const Icon(
+                          Icons.edit,
+                          color: AppColors.mainBrown,
+                          size: 25,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+          const SizedBox(height: 8),
           //名前
           _buildSectionTitle('呼ばれたい名前'),
           const SizedBox(height: 8),
@@ -129,6 +195,69 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
         fontWeight: FontWeight.bold,
         color: AppColors.mainBrown,
       ),
+    );
+  }
+
+  //背景色リスト
+  void _showColorPicker(BuildContext context) {
+    final List<Color> bgColors = [
+      Colors.pink[100]!,
+      Colors.blue[100]!,
+      Colors.green[100]!,
+      Colors.orange[100]!,
+      Colors.purple[100]!,
+      Colors.yellow[100]!,
+      Colors.teal[100]!,
+      Colors.grey[300]!,
+    ];
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.backgroundBeige,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(25.0)),
+      ),
+      builder: (context) {
+        return Container(
+          height: MediaQuery.of(context).size.height * 0.5,
+          padding: const EdgeInsets.all(24.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              const Text(
+                '背景色をえらぶ',
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+              ),
+              const SizedBox(height: 20),
+              Wrap(
+                spacing: 15,
+                runSpacing: 15,
+                children: bgColors.map((color) {
+                  return GestureDetector(
+                    onTap: () {
+                      ref.read(iconBgColorProvider.notifier).state = color;
+                      // ここで色を選択した時の処理
+                      print('色を選択しました: $color');
+                      Navigator.pop(context); // ポップアップを閉じる
+                    },
+                    child: Container(
+                      width: 50,
+                      height: 50,
+                      decoration: BoxDecoration(
+                        color: color,
+                        shape: BoxShape.circle,
+                        border: Border.all(color: Colors.black12),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              ),
+              const SizedBox(height: 30),
+            ],
+          ),
+        );
+      },
     );
   }
 }

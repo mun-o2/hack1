@@ -80,6 +80,12 @@ final memoryListProvider = Provider<List<Memory>>((ref) {
 });
 
 //-----------------------------------------------------------------
+// アイコンの背景色を管理するStateProvider。初期値はパステルピンク
+final iconBgColorProvider = StateProvider<Color>((ref) {
+  return Colors.pink[100]!; // 初期の色
+});
+
+//-----------------------------------------------------------------
 //使用カラー管理
 class AppColors {
   // メインのテーマカラーなど
@@ -367,9 +373,4 @@ Widget commonBackButton(BuildContext context, {VoidCallback? onPressed}) {
     icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.mainBrown),
     onPressed: onPressed ?? () => Navigator.of(context).pop(),
   );
-}
-
-class AppAssets {
-  //芝生画像
-  static const String glass = 'assets/images/glass.png';
 }

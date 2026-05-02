@@ -30,27 +30,50 @@ class SeniorHomeScreen extends ConsumerWidget {
                 const SizedBox(height: 60),
 
                 // 上のお知らせバー(仮)
-                Container(
-                  width: double.infinity,
-                  height: 130,
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  alignment: Alignment.center,
-                  padding: const EdgeInsets.symmetric(horizontal: 19),
-                  child: const Text(
-                    '今日は、どんなお話を\n聞いてみようかな？',
-                    textAlign: TextAlign.center,
-                    style: TextStyle(
-                      color: AppColors.mainBrown,
-                      fontSize: 22,
-                      fontWeight: FontWeight.w700,
-                    ),
+                SizedBox(
+                  height: 160,
+                  child: Stack(
+                    clipBehavior: Clip.none,
+                    children: [
+                      // 白いボックス
+                      Align(
+                        alignment: Alignment.topCenter,
+                        child: Container(
+                          width: double.infinity,
+                          height: 130, // 元々の高さ
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          alignment: Alignment.center,
+                          padding: const EdgeInsets.symmetric(horizontal: 19),
+                          child: const Text(
+                            '今日は、どんなお話を\n聞いてみようかな？',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: AppColors.mainBrown,
+                              fontSize: 22,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                        ),
+                      ),
+
+                      // ひつじ
+                      Positioned(
+                        left: -15,
+                        bottom: 0,
+                        child: Image.asset(
+                          'assets/images/right.png',
+                          height: 120, // サイズ
+                          fit: BoxFit.contain,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
 
-                const SizedBox(height: 55),
+                const SizedBox(height: 35),
 
                 HomeMenuCard(
                   label: '掲示板',
