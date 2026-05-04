@@ -12,10 +12,11 @@ class StudentMainTab extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppColors.backgroundBeige,
+      backgroundColor: Colors.white,
 
       //���[���I���ɖ߂�{�^���������Ɉړ������܂���
-      extendBody: true,
+      // ナビゲーションバーの背景透過
+      extendBody: false,
       body: navigationShell,
 
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
@@ -24,16 +25,15 @@ class StudentMainTab extends StatelessWidget {
         child: const Icon(Icons.home),
       ),
 
-      bottomNavigationBar: StudentBottomNavBar(
-        selectedIndex: navigationShell.currentIndex,
-        onTap: (index) {
-          navigationShell.goBranch(
-            index,
-            // ���łɂ��̃^�u�ɂ��鎞�ɂ�����x�^�b�v������A�ŏ��̉�ʂɖ߂�ݒ�i���D�݂Łj
-            initialLocation: index == navigationShell.currentIndex,
-          );
-        },
-      ),
+      // ホーム画面以外のときにのみナビゲーションバーを表示
+      bottomNavigationBar: navigationShell.currentIndex == 0
+          ? null
+          : StudentBottomNavBar(
+              selectedIndex: navigationShell.currentIndex,
+              onTap: (index) {
+                navigationShell.goBranch(index);
+              },
+            ),
     );
   }
 }

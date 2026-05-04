@@ -102,7 +102,7 @@ class StudentBoardDetailScreen extends StatelessWidget {
             // お話をするボタン
             ElevatedButton(
               onPressed: () {
-                // TODO: お話をするボタンの処理
+                //お話をするボタンの処理
                 Navigator.push(
                   context,
                   MaterialPageRoute(

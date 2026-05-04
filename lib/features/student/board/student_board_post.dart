@@ -66,8 +66,8 @@ class _StudentBoardPostState extends ConsumerState<StudentBoardPost> {
 
     return Container(
       width: double.infinity,
-      // 画面の高さの90%くらいに収める
-      height: MediaQuery.of(context).size.height * 0.92,
+      // 画面の高さの75%くらいに収める
+      height: MediaQuery.of(context).size.height * 0.75,
       padding: const EdgeInsets.fromLTRB(30, 20, 30, 40),
       decoration: BoxDecoration(
         color: AppColors.backgroundBeige, // 背景色
