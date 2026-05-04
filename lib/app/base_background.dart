@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 
 class BaseBackground extends StatelessWidget {
   final Widget child;
-  final String? title; //‰æ–Êã•”ƒ^ƒCƒgƒ‹
-  final Widget? floatingActionButton; //ƒ{ƒ^ƒ“iáÒ‚ÌŒf¦”Â“Še’Ç‰Áƒ{ƒ^ƒ“j
-  final Widget? leading; //¶ã‚Ì–ß‚éƒ{ƒ^ƒ“
+  final String? title; // ? AppBarã®ã‚¿ã‚¤ãƒˆãƒ«ã€‚nullã®ã¨ãã¯AppBarè‡ªä½“ã‚’è¡¨ç¤ºã—ãªã„
+  final Widget? floatingActionButton; // ? FloatingActionButtonã€‚nullã®ã¨ãã¯è¡¨ç¤ºã—ãªã„
+  final Widget? leading; // ? AppBarã®å·¦å´ã«è¡¨ç¤ºã™ã‚‹Widgetã€‚nullã®ã¨ãã¯è¡¨ç¤ºã—ãªã„
 
   const BaseBackground({
     super.key,
@@ -20,7 +20,7 @@ class BaseBackground extends StatelessWidget {
     return Stack(
       children: [
         Container(color: AppColors.backgroundBeige),
-        // Å¶‰æ‘œ
+        // ç”»é¢ä¸‹éƒ¨ã®è‰ã®ã‚¤ãƒ©ã‚¹ãƒˆ
         Positioned(
           bottom: 0,
           left: 0,
@@ -30,7 +30,7 @@ class BaseBackground extends StatelessWidget {
 
         Scaffold(
           backgroundColor: Colors.transparent,
-          //title‚ª‚ ‚é‚¾‚¯AppBar‚ğ•\¦
+          // AppBarã¯titleãŒnullã®ã¨ãã¯è¡¨ç¤ºã—ãªã„
           appBar: title == null
               ? null
               : AppBar(

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hack1/features/materials.dart';
-import 'package:hack1/features/setting/base_background.dart';
+import 'package:hack1/app/base_background.dart';
 
 class SeniorHomeScreen extends ConsumerWidget {
   const SeniorHomeScreen({super.key});
