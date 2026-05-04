@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hack1/features/materials.dart';
+import 'package:hack1/features/student/board/board_detail_screen.dart';
 
 import 'student_board_post.dart';
 
@@ -65,11 +66,27 @@ class _StudentBoardScreenState extends ConsumerState<StudentBoardScreen> {
                     post.category != selectedCategory) {
                   return const SizedBox.shrink(); // 一致しなければ表示しない
                 }
-                return postCard(
-                  post.category,
-                  post.dateTime,
-                  post.content,
-                  categoryColors,
+                // 投稿カードをタップしたときの処理
+                return GestureDetector(
+                  onTap: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => StudentBoardDetailScreen(
+                          category: post.category,
+                          dateTime: post.dateTime,
+                          content: post.content,
+                        ),
+                      ),
+                    );
+                  },
+                  // 投稿カードのパーツ
+                  child: postCard(
+                    post.category,
+                    post.dateTime,
+                    post.content,
+                    categoryColors,
+                  ),
                 );
               },
             ),
