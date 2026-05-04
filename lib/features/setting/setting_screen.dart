@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hack1/features/materials.dart';
 import 'package:hack1/app/base_background.dart';
+import 'package:hack1/features/materials.dart';
 
 class SettingScreen extends ConsumerStatefulWidget {
   final Widget? additionalSettingContent;
@@ -87,6 +87,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
   Widget _accountSetting() {
     //現在のアイコン背景色
     final currentIconColor = ref.watch(iconBgColorProvider);
+    final user = ref.watch(currentUserProvider);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
@@ -162,7 +163,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
           _buildSectionTitle('呼ばれたい名前'),
           const SizedBox(height: 8),
           SettingButton(
-            label: 'はるかちゃん', // 後で変数にする
+            label: user.userName, // 後で変数にする
             onTap: () => print('名前変更ダイアログへ'),
           ),
 

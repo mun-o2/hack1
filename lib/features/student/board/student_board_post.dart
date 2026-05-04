@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import 'board_writing_space.dart';
 import 'package:flutter/material.dart';
 import 'package:hack1/features/materials.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class StudentBoardPost extends ConsumerStatefulWidget {
   const StudentBoardPost({super.key});
@@ -17,12 +17,14 @@ class _StudentBoardPostState extends ConsumerState<StudentBoardPost> {
 
   @override
   Widget build(BuildContext context) {
+    // 現在のユーザー情報を取得
+    final user = ref.watch(currentUserProvider);
     //若者側はかわいいカラーで固定
     final pinkColor = AppColors.pastelPink;
     final categoryColors = AppColors.pastelCategoryColors;
     // 保存ボタン
     final saveButton = GestureDetector(
-      onTap: () {
+      onTap: () async {
         if (_enteredText.isEmpty) {
           _showCustomToast(context, '本文を入力してください', pinkColor); //
           return;
@@ -35,10 +37,25 @@ class _StudentBoardPostState extends ConsumerState<StudentBoardPost> {
         }
 
         final newPost = Post(
+          id: '',
           category: _selectedCategory,
-          dateTime: '4/30 12:00~14:00',
+          dateTime: '4/30 12:00~14:00', // 本来は現在日時をフォーマットして入れる
           content: _enteredText,
+          createdAt: DateTime.now(),
+          userId: user.userId, // 追加: 作成日時を入れる
+          userName: user.userName, // 追加: 投稿者の名前
+          targetRole: 'senior', // 追加: 投稿の対象
         );
+
+        await FirebaseFirestore.instance.collection('posts').add({
+          'category': _selectedCategory,
+          'dateTime': '4/30 12:00~14:00',
+          'content': _enteredText,
+          'createdAt': Timestamp.now(),
+          'userId': newPost.userId,
+          'userName': newPost.userName,
+          'targetRole': newPost.targetRole,
+        });
         // データを追加
         ref.read(postListProvider.notifier).addPost(newPost);
         Navigator.pop(context); // 前の画面に戻る

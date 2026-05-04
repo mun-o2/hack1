@@ -3,16 +3,9 @@ import 'package:hack1/features/call/call_screen.dart';
 import 'package:hack1/features/materials.dart';
 
 class StudentBoardDetailScreen extends StatelessWidget {
-  final String category;
-  final String dateTime;
-  final String content;
+  final Post post;
 
-  const StudentBoardDetailScreen({
-    super.key,
-    required this.category,
-    required this.dateTime,
-    required this.content,
-  });
+  const StudentBoardDetailScreen({super.key, required this.post});
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +61,7 @@ class StudentBoardDetailScreen extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    category,
+                    post.category,
                     style: const TextStyle(
                       fontSize: 20,
                       fontWeight: FontWeight.bold,
@@ -78,7 +71,7 @@ class StudentBoardDetailScreen extends StatelessWidget {
                   const SizedBox(height: 12),
 
                   Text(
-                    dateTime,
+                    post.dateTime,
                     style: const TextStyle(
                       fontSize: 18,
                       color: AppColors.mainBrown,
@@ -87,7 +80,7 @@ class StudentBoardDetailScreen extends StatelessWidget {
 
                   const SizedBox(height: 16),
                   Text(
-                    content,
+                    post.content,
                     style: const TextStyle(
                       fontSize: 18,
                       color: AppColors.mainBrown,
@@ -106,7 +99,7 @@ class StudentBoardDetailScreen extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (_) => CallPage(channelName: 'test'),
+                    builder: (_) => CallPage(channelName: post.id),
                   ),
                 );
               },

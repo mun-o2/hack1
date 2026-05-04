@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 
@@ -7,13 +8,41 @@ final roleProvider = StateProvider<String>(
 ); //今は一旦若者をデフォルトにしてます
 
 //-----------------------------------------------------------------
+//現在ログイン中のユーザー情報（今回は仮で固定）
+class AppUser {
+  final String userId;
+  final String userName;
+  final String role;
+
+  AppUser({required this.userId, required this.userName, required this.role});
+}
+
+final currentUserProvider = StateProvider<AppUser>((ref) {
+  return AppUser(userId: 'test_user_001', userName: 'はるかちゃん', role: 'student');
+});
+
+//-----------------------------------------------------------------
 //掲示板投稿のデータモデル
 class Post {
+  final String id;
   final String category;
   final String dateTime;
   final String content;
+  final DateTime createdAt;
+  final String userId; //投稿者のユーザーID
+  final String userName; //投稿者の名前
+  final String targetRole; //投稿の対象（"student" または "senior"）
 
-  Post({required this.category, required this.dateTime, required this.content});
+  Post({
+    required this.id,
+    required this.category,
+    required this.dateTime,
+    required this.content,
+    required this.createdAt,
+    required this.userId,
+    required this.userName,
+    required this.targetRole,
+  });
 }
 
 // 投稿リストの状態を管理するクラス
@@ -32,6 +61,31 @@ final postListProvider = StateNotifierProvider<PostListNotifier, List<Post>>((
   ref,
 ) {
   return PostListNotifier();
+});
+
+//-----------------------------------------------------------------
+//firebaseからのデータ取得（掲示板）
+final postsStreamProvider = StreamProvider<List<Post>>((ref) {
+  return FirebaseFirestore.instance
+      .collection('posts')
+      .orderBy('createdAt', descending: true)
+      .snapshots()
+      .map((snapshot) {
+        return snapshot.docs.map((doc) {
+          final data = doc.data();
+
+          return Post(
+            id: doc.id,
+            category: data['category'] ?? '',
+            dateTime: data['dateTime'] ?? '',
+            content: data['content'] ?? data['description'] ?? '',
+            createdAt: (data['createdAt'] as Timestamp).toDate(),
+            userId: data['userId'] ?? '',
+            userName: data['userName'] ?? '名無し',
+            targetRole: data['targetRole'] ?? '',
+          );
+        }).toList();
+      });
 });
 
 //-----------------------------------------------------------------

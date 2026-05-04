@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hack1/app/base_background.dart';
 import 'package:hack1/features/materials.dart';
 import 'package:hack1/features/student/board/board_detail_screen.dart';
-import 'package:hack1/features/setting/base_background.dart';
 
 import 'student_board_post.dart';
 
@@ -19,7 +19,7 @@ class _StudentBoardScreenState extends ConsumerState<StudentBoardScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final posts = ref.watch(postListProvider);
+    final postsAsync = ref.watch(postsStreamProvider);
 
     //若者側はかわいいカラーで固定
     final categoryColors = AppColors.pastelCategoryColors;
@@ -47,54 +47,98 @@ class _StudentBoardScreenState extends ConsumerState<StudentBoardScreen> {
       ),
       child: Column(
         children: [
-          //カテゴリフィルター呼び出し
-          CategoryFilter(
-            selectedCategory: selectedCategory,
-            onCategorySelected: (category) {
-              setState(() {
-                selectedCategory = category;
-              });
-            },
-            themeColors: AppColors.pastelCategoryColors,
+          //カテゴリフィルター
+          SingleChildScrollView(
+            scrollDirection: Axis.horizontal, // 横にスクロール
+            padding: const EdgeInsets.fromLTRB(10, 25, 0, 0),
+            child: Row(
+              children: categoryColors.keys.map((category) {
+                return _buildCategoryButton(category, categoryColors);
+              }).toList(),
+            ),
           ),
           const SizedBox(height: 10),
           Expanded(
-            child: ListView.builder(
-              itemCount: posts.length,
-              itemBuilder: (context, index) {
-                final post = posts[index];
+            child: postsAsync.when(
+              data: (posts) {
+                return ListView.builder(
+                  itemCount: posts.length,
+                  itemBuilder: (context, index) {
+                    final post = posts[index];
 
-                // カテゴリフィルターがかかっている場合の処理
-                if (selectedCategory != null &&
-                    post.category != selectedCategory) {
-                  return const SizedBox.shrink(); // 一致しなければ表示しない
-                }
-                // 投稿カードをタップしたときの処理
-                return GestureDetector(
-                  onTap: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => StudentBoardDetailScreen(
-                          category: post.category,
-                          dateTime: post.dateTime,
-                          content: post.content,
-                        ),
+                    // カテゴリフィルターがかかっている場合の処理
+                    if (selectedCategory != null &&
+                        post.category != selectedCategory) {
+                      return const SizedBox.shrink(); // 一致しなければ表示しない
+                    }
+                    // 投稿カードをタップしたときの処理
+                    return GestureDetector(
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            // 遷移先の画面を指定
+                            builder: (context) =>
+                                StudentBoardDetailScreen(post: post),
+                          ),
+                        );
+                      },
+                      // 投稿カードのパーツ
+                      child: postCard(
+                        post.category,
+                        post.dateTime,
+                        post.content,
+                        categoryColors,
                       ),
                     );
                   },
-                  // 投稿カードのパーツ
-                  child: postCard(
-                    post.category,
-                    post.dateTime,
-                    post.content,
-                    categoryColors,
-                  ),
                 );
               },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (e, st) => const Center(child: Text('エラーが発生しました')),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  //投稿追加ボタン
+
+  // カテゴリボタンを作るパーツ
+  Widget _buildCategoryButton(String category, Map<String, Color> colorSet) {
+    final Color themeColor = AppColors.getCategoryColor(category, colorSet);
+
+    // selectedCategory が null でない、かつ今のカテゴリと一致しているか
+    final bool isSelected = selectedCategory == category;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: OutlinedButton(
+        onPressed: () {
+          setState(() {
+            if (isSelected) {
+              // 1. すでに選択されているボタンをもう一度押したら解除（nullにする）
+              selectedCategory = null;
+            } else {
+              // 2. それ以外（未選択 or 別のボタン）を押したら、そのカテゴリを選択
+              selectedCategory = category;
+            }
+          });
+        },
+        style: OutlinedButton.styleFrom(
+          // 背景色：選択中ならカテゴリ色、そうでなければ白
+          backgroundColor: isSelected ? themeColor : Colors.white,
+          // 文字色：選択中なら白、そうでなければブラウン
+          foregroundColor: isSelected ? Colors.white : AppColors.mainBrown,
+          side: BorderSide(color: themeColor, width: 2.0),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+        ),
+        child: Text(
+          category,
+          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
+        ),
       ),
     );
   }
