@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hack1/features/materials.dart';
 import 'package:hack1/features/student/board/board_detail_screen.dart';
+import 'package:hack1/features/setting/base_background.dart';
 
 import 'student_board_post.dart';
 
@@ -20,39 +21,41 @@ class _StudentBoardScreenState extends ConsumerState<StudentBoardScreen> {
   Widget build(BuildContext context) {
     final posts = ref.watch(postListProvider);
 
-    final Map<String, dynamic> theme = ref.watch(colorThemeProvider);
-    final Map<String, Color> categoryColors =
-        theme['categories'] as Map<String, Color>;
+    //若者側はかわいいカラーで固定
+    final categoryColors = AppColors.pastelCategoryColors;
 
-    Image.asset(AppAssets.glass);
+    return BaseBackground(
+      title: '掲示板',
 
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          '掲示板',
-          style: TextStyle(
-            fontSize: 28,
-            fontWeight: FontWeight.bold,
-            color: AppColors.mainBrown,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: AppColors.backgroundBeige,
-        elevation: 0,
-        scrolledUnderElevation: 0,
+      //投稿追加ボタン
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          // 投稿作成画面（StudentBoardPost）を表示
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            barrierColor: Colors.transparent,
+            builder: (context) {
+              // 表示したい中身（作成したWidget）
+              return const StudentBoardPost();
+            },
+          );
+        },
+        backgroundColor: Colors.white,
+        child: const Icon(Icons.add, color: AppColors.mainBrown, size: 32),
       ),
-      backgroundColor: AppColors.backgroundBeige,
-      body: Column(
+      child: Column(
         children: [
-          //カテゴリフィルター
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal, // 横にスクロール
-            padding: const EdgeInsets.fromLTRB(10, 25, 0, 0),
-            child: Row(
-              children: categoryColors.keys.map((category) {
-                return _buildCategoryButton(category, categoryColors);
-              }).toList(),
-            ),
+          //カテゴリフィルター呼び出し
+          CategoryFilter(
+            selectedCategory: selectedCategory,
+            onCategorySelected: (category) {
+              setState(() {
+                selectedCategory = category;
+              });
+            },
+            themeColors: AppColors.pastelCategoryColors,
           ),
           const SizedBox(height: 10),
           Expanded(
@@ -92,63 +95,6 @@ class _StudentBoardScreenState extends ConsumerState<StudentBoardScreen> {
             ),
           ),
         ],
-      ),
-
-      //投稿追加ボタン
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          // 投稿作成画面（StudentBoardPost）を表示
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-            barrierColor: Colors.transparent,
-            builder: (context) {
-              // 表示したい中身（作成したWidget）
-              return const StudentBoardPost();
-            },
-          );
-        },
-        backgroundColor: Colors.white,
-        child: const Icon(Icons.add, color: AppColors.mainBrown, size: 32),
-      ),
-    );
-  }
-
-  // カテゴリボタンを作るパーツ
-  Widget _buildCategoryButton(String category, Map<String, Color> colorSet) {
-    final Color themeColor = AppColors.getCategoryColor(category, colorSet);
-
-    // selectedCategory が null でない、かつ今のカテゴリと一致しているか
-    final bool isSelected = selectedCategory == category;
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 4),
-      child: OutlinedButton(
-        onPressed: () {
-          setState(() {
-            if (isSelected) {
-              // 1. すでに選択されているボタンをもう一度押したら解除（nullにする）
-              selectedCategory = null;
-            } else {
-              // 2. それ以外（未選択 or 別のボタン）を押したら、そのカテゴリを選択
-              selectedCategory = category;
-            }
-          });
-        },
-        style: OutlinedButton.styleFrom(
-          // 背景色：選択中ならカテゴリ色、そうでなければ白
-          backgroundColor: isSelected ? themeColor : Colors.white,
-          // 文字色：選択中なら白、そうでなければブラウン
-          foregroundColor: isSelected ? Colors.white : AppColors.mainBrown,
-          side: BorderSide(color: themeColor, width: 2.0),
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        ),
-        child: Text(
-          category,
-          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
-        ),
       ),
     );
   }

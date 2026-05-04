@@ -1,51 +1,37 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hack1/features/materials.dart';
-import 'package:hack1/features/student/board/student_board_screen.dart';
-import 'package:hack1/features/student/home/student_home_screen.dart';
 import 'package:hack1/features/student/main/widgets/nav_bar.dart';
-import 'package:hack1/features/student/memory/student_memory_screen.dart';
-import 'package:hack1/features/student/setting/student_setting_screen.dart';
 
-class StudentMainTab extends StatefulWidget {
-  const StudentMainTab({super.key});
+class StudentMainTab extends StatelessWidget {
+  // ? navigationShell ���R���X�g���N�^�Ŏ󂯎��
+  const StudentMainTab({super.key, required this.navigationShell});
 
-  @override
-  State<StudentMainTab> createState() => _StudentMainTabState();
-}
-
-class _StudentMainTabState extends State<StudentMainTab> {
-  int _selectedIndex = 0;
+  final StatefulNavigationShell navigationShell;
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> pages = const [
-      StudentHomeScreen(),
-      StudentBoardScreen(),
-      StudentMemoryScreen(),
-      StudentSettingScreen(),
-    ];
-
     return Scaffold(
       backgroundColor: AppColors.backgroundBeige,
-      body: pages[_selectedIndex],
 
       //���[���I���ɖ߂�{�^���������Ɉړ������܂���
+      extendBody: true,
+      body: navigationShell,
+
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       floatingActionButton: FloatingActionButton(
-        // Navigate to the onboarding screen
-        onPressed: () {
-          context.go('/role');
-        },
+        onPressed: () => context.go('/role'),
         child: const Icon(Icons.home),
       ),
 
       bottomNavigationBar: StudentBottomNavBar(
-        selectedIndex: _selectedIndex,
+        selectedIndex: navigationShell.currentIndex,
         onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
+          navigationShell.goBranch(
+            index,
+            // ���łɂ��̃^�u�ɂ��鎞�ɂ�����x�^�b�v������A�ŏ��̉�ʂɖ߂�ݒ�i���D�݂Łj
+            initialLocation: index == navigationShell.currentIndex,
+          );
         },
       ),
     );

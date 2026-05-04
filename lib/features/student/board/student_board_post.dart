@@ -17,10 +17,9 @@ class _StudentBoardPostState extends ConsumerState<StudentBoardPost> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = ref.watch(colorThemeProvider);
-    final categoryColors = theme['categories'] as Map<String, Color>;
-    final pinkColor = theme['pink'] as Color; // ピンク系のテーマ色
-
+    //若者側はかわいいカラーで固定
+    final pinkColor = AppColors.pastelPink;
+    final categoryColors = AppColors.pastelCategoryColors;
     // 保存ボタン
     final saveButton = GestureDetector(
       onTap: () {
