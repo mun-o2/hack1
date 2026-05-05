@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hack1/app/base_background.dart';
+import 'package:hack1/features/common/base_background.dart';
 import 'package:hack1/features/materials.dart';
 
 class StudentHomeScreen extends StatelessWidget {

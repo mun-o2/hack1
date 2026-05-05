@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:hack1/app/base_background.dart';
+import 'package:hack1/features/common/base_background.dart';
 import 'package:hack1/features/materials.dart';
 
 class SeniorMemoryScreen extends ConsumerStatefulWidget {

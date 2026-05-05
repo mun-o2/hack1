@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:hack1/features/call/call_screen.dart';
 import 'package:hack1/features/materials.dart';
 
-class StudentBoardDetailScreen extends StatelessWidget {
+class BoardDetailScreen extends StatelessWidget {
   final Post post;
 
-  const StudentBoardDetailScreen({super.key, required this.post});
+  const BoardDetailScreen({super.key, required this.post});
 
   @override
   Widget build(BuildContext context) {
