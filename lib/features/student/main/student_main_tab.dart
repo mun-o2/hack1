@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hack1/features/student/main/widgets/nav_bar.dart';
 
 class StudentMainTab extends StatelessWidget {
-  // ? navigationShell ���R���X�g���N�^�Ŏ󂯎��
+  // ? navigationShell
   const StudentMainTab({super.key, required this.navigationShell});
 
   final StatefulNavigationShell navigationShell;
@@ -13,7 +14,6 @@ class StudentMainTab extends StatelessWidget {
     return Scaffold(
       backgroundColor: Colors.white,
 
-      //���[���I���ɖ߂�{�^���������Ɉړ������܂���
       // ナビゲーションバーの背景透過
       extendBody: false,
       body: navigationShell,

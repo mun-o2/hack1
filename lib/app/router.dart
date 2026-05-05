@@ -1,5 +1,8 @@
 import 'package:go_router/go_router.dart';
+import 'package:hack1/features/onboarding/initial_setting_screen.dart';
+import 'package:hack1/features/onboarding/onboarding_screen.dart';
 import 'package:hack1/features/onboarding/role_select_screen.dart';
+import 'package:hack1/features/splash/splash_screen.dart';
 import 'package:hack1/features/senior/board/senior_board_screen.dart';
 
 import 'package:hack1/features/senior/home/senior_home_screen.dart';
@@ -12,17 +15,22 @@ import 'package:hack1/features/student/memory/student_memory_screen.dart';
 import 'package:hack1/features/student/setting/student_setting_screen.dart';
 
 final GoRouter router = GoRouter(
-  initialLocation: '/role',
+  initialLocation: '/splash',
   routes: [
+    GoRoute(path: '/splash', builder: (context, state) => const SplashScreen()),
+    GoRoute(
+      path: '/onboarding',
+      builder: (context, state) => const OnboardingScreen(),
+    ),
     GoRoute(
       path: '/role',
       builder: (context, state) => const RoleSelectScreen(),
     ),
 
-    //ŽáŽÒ—p‚ÌƒiƒrƒQ[ƒVƒ‡ƒ“ƒo[•t‚«ƒ‹[ƒg
+    //ï¿½ï¿½Ò—pï¿½Ìƒiï¿½rï¿½Qï¿½[ï¿½Vï¿½ï¿½ï¿½ï¿½ï¿½oï¿½[ï¿½tï¿½ï¿½ï¿½ï¿½ï¿½[ï¿½g
     StatefulShellRoute.indexedStack(
       builder: (context, state, navigationShell) {
-        // navigationShell ‚ð“n‚·‚±‚Æ‚ÅA¡‚Ì‰æ–Ê‚ª‚Ç‚ê‚©‚ð StudentMainTab ‚ª’m‚ê‚é‚æ‚¤‚É‚È‚è‚Ü‚·
+        // navigationShell ï¿½ï¿½nï¿½ï¿½ï¿½ï¿½ï¿½Æ‚ÅAï¿½ï¿½ï¿½Ì‰ï¿½Ê‚ï¿½ï¿½Ç‚ê‚©ï¿½ï¿½ StudentMainTab ï¿½ï¿½ï¿½mï¿½ï¿½ï¿½æ‚¤ï¿½É‚È‚ï¿½Ü‚ï¿½
         return StudentMainTab(navigationShell: navigationShell);
       },
       branches: [
@@ -31,7 +39,7 @@ final GoRouter router = GoRouter(
             GoRoute(
               path: '/student',
               builder: (context, state) =>
-                  const StudentHomeScreen(), // ƒz[ƒ€‰æ–Ê’P‘Ì‚ÌWidget
+                  const StudentHomeScreen(), // ï¿½zï¿½[ï¿½ï¿½ï¿½ï¿½Ê’Pï¿½Ì‚ï¿½Widget
             ),
           ],
         ),
@@ -60,6 +68,27 @@ final GoRouter router = GoRouter(
           ],
         ),
       ],
+    ),
+
+    GoRoute(
+      path: '/initial/student',
+      builder: (context, state) => const InitialSettingScreen(isSenior: false),
+    ),
+    GoRoute(
+      path: '/initial/senior',
+      builder: (context, state) => const InitialSettingScreen(isSenior: true),
+    ),
+    GoRoute(
+      path: '/student/board',
+      builder: (context, state) => const StudentBoardScreen(),
+    ),
+    GoRoute(
+      path: '/student/memory',
+      builder: (context, state) => const StudentMemoryScreen(),
+    ),
+    GoRoute(
+      path: '/student/setting',
+      builder: (context, state) => const StudentSettingScreen(),
     ),
     GoRoute(
       path: '/senior',
