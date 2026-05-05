@@ -1,53 +1,38 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hack1/features/materials.dart';
-import 'package:hack1/features/student/board/student_board_screen.dart';
-import 'package:hack1/features/student/home/student_home_screen.dart';
 import 'package:hack1/features/student/main/widgets/nav_bar.dart';
-import 'package:hack1/features/student/memory/student_memory_screen.dart';
-import 'package:hack1/features/student/setting/student_setting_screen.dart';
 
-class StudentMainTab extends StatefulWidget {
-  const StudentMainTab({super.key});
+class StudentMainTab extends StatelessWidget {
+  // ? navigationShell
+  const StudentMainTab({super.key, required this.navigationShell});
 
-  @override
-  State<StudentMainTab> createState() => _StudentMainTabState();
-}
-
-class _StudentMainTabState extends State<StudentMainTab> {
-  int _selectedIndex = 0;
+  final StatefulNavigationShell navigationShell;
 
   @override
   Widget build(BuildContext context) {
-    final List<Widget> pages = const [
-      StudentHomeScreen(),
-      StudentBoardScreen(),
-      StudentMemoryScreen(),
-      StudentSettingScreen(),
-    ];
-
     return Scaffold(
-      backgroundColor: AppColors.backgroundBeige,
-      body: pages[_selectedIndex],
+      backgroundColor: Colors.white,
 
-      //���[���I���ɖ߂�{�^���������Ɉړ������܂���
+      // ナビゲーションバーの背景透過
+      extendBody: false,
+      body: navigationShell,
+
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       floatingActionButton: FloatingActionButton(
-        // Navigate to the onboarding screen
-        onPressed: () {
-          context.go('/role');
-        },
+        onPressed: () => context.go('/role'),
         child: const Icon(Icons.home),
       ),
 
-      bottomNavigationBar: StudentBottomNavBar(
-        selectedIndex: _selectedIndex,
-        onTap: (index) {
-          setState(() {
-            _selectedIndex = index;
-          });
-        },
-      ),
+      // ホーム画面以外のときにのみナビゲーションバーを表示
+      bottomNavigationBar: navigationShell.currentIndex == 0
+          ? null
+          : StudentBottomNavBar(
+              selectedIndex: navigationShell.currentIndex,
+              onTap: (index) {
+                navigationShell.goBranch(index);
+              },
+            ),
     );
   }
 }

@@ -1,5 +1,49 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+
+//ロール（若者or高齢者）を保持するプロバイダー
+final roleProvider = StateProvider<String>(
+  (ref) => 'student',
+); //今は一旦若者をデフォルトにしてます
+
+//-----------------------------------------------------------------
+//現在ログイン中のユーザー情報（今回は仮で固定）
+class AppUser {
+  final String userId;
+  final String userName;
+  final String role;
+
+  AppUser({required this.userId, required this.userName, required this.role});
+}
+
+final currentUserProvider = StateProvider<AppUser>((ref) {
+  return AppUser(userId: 'test_user_001', userName: 'はるかちゃん', role: 'student');
+});
+
+//-----------------------------------------------------------------
+//掲示板投稿のデータモデル
+class Post {
+  final String id;
+  final String category;
+  final String dateTime;
+  final String content;
+  final DateTime createdAt;
+  final String userId; //投稿者のユーザーID
+  final String userName; //投稿者の名前
+  final String targetRole; //投稿の対象（"student" または "senior"）
+
+  Post({
+    required this.id,
+    required this.category,
+    required this.dateTime,
+    required this.content,
+    required this.createdAt,
+    required this.userId,
+    required this.userName,
+    required this.targetRole,
+  });
+}
 
 // 投稿リストの状態を管理するクラス
 class PostListNotifier extends StateNotifier<List<Post>> {
@@ -19,6 +63,83 @@ final postListProvider = StateNotifierProvider<PostListNotifier, List<Post>>((
   return PostListNotifier();
 });
 
+//-----------------------------------------------------------------
+//firebaseからのデータ取得（掲示板）
+final postsStreamProvider = StreamProvider<List<Post>>((ref) {
+  return FirebaseFirestore.instance
+      .collection('posts')
+      .orderBy('createdAt', descending: true)
+      .snapshots()
+      .map((snapshot) {
+        return snapshot.docs.map((doc) {
+          final data = doc.data();
+
+          return Post(
+            id: doc.id,
+            category: data['category'] ?? '',
+            dateTime: data['dateTime'] ?? '',
+            content: data['content'] ?? data['description'] ?? '',
+            createdAt: (data['createdAt'] as Timestamp).toDate(),
+            userId: data['userId'] ?? '',
+            userName: data['userName'] ?? '名無し',
+            targetRole: data['targetRole'] ?? '',
+          );
+        }).toList();
+      });
+});
+
+//-----------------------------------------------------------------
+//思い出のデータモデル
+class Memory {
+  final String partnerName;
+  final String category;
+  final String dateTime;
+  final String icon;
+
+  Memory({
+    required this.partnerName,
+    required this.category,
+    required this.dateTime,
+    required this.icon,
+  });
+}
+
+final memoryListProvider = Provider<List<Memory>>((ref) {
+  return [
+    Memory(
+      partnerName: 'はるかさん',
+      category: '震災',
+      dateTime: '4/28 17:00~17:30',
+      icon: 'assets/icons/pink-girl.png',
+    ),
+    Memory(
+      partnerName: 'さとうさん',
+      category: '戦争',
+      dateTime: '4/25 17:00~17:30',
+      icon: 'assets/icons/blue-boy.png',
+    ),
+    Memory(
+      partnerName: 'すずきさん',
+      category: '雑談',
+      dateTime: '4/20 17:00~17:30',
+      icon: 'assets/icons/pink-girl.png',
+    ),
+    Memory(
+      partnerName: 'たなかさん',
+      category: '人生',
+      dateTime: '4/18 17:00~17:30',
+      icon: 'assets/icons/blue-boy.png',
+    ),
+  ];
+});
+
+//-----------------------------------------------------------------
+// アイコンの背景色を管理するStateProvider。初期値はパステルピンク
+final iconBgColorProvider = StateProvider<Color>((ref) {
+  return Colors.pink[100]!; // 初期の色
+});
+
+//-----------------------------------------------------------------
 //使用カラー管理
 class AppColors {
   // メインのテーマカラーなど
@@ -58,7 +179,7 @@ class AppColors {
 }
 
 // trueなら「見やすい」、falseなら「かわいい」
-final isHighContrastProvider = StateProvider<bool>((ref) => false);
+final isHighContrastProvider = StateProvider<bool>((ref) => true);
 
 // 現在のカラーセットを返すプロバイダー
 final colorThemeProvider = Provider((ref) {
@@ -76,15 +197,7 @@ final colorThemeProvider = Provider((ref) {
   };
 });
 
-//掲示板の投稿１つ分
-class Post {
-  final String category;
-  final String dateTime;
-  final String content;
-
-  Post({required this.category, required this.dateTime, required this.content});
-}
-
+//-----------------------------------------------------------------
 //ホーム画面の各ボタン
 class HomeMenuCard extends StatelessWidget {
   final String label;
@@ -152,6 +265,7 @@ class HomeMenuCard extends StatelessWidget {
   }
 }
 
+//-----------------------------------------------------------------
 //カテゴリの3×2表示・選択
 class CategorySelect extends StatefulWidget {
   // 単一選択なら String、複数選択なら List<String> を扱う
@@ -243,7 +357,74 @@ class _CategorySelectState extends State<CategorySelect> {
   }
 }
 
-class AppAssets {
-  //芝生画像
-  static const String glass = 'assets/images/glass.png';
+//-----------------------------------------------------------------
+//カテゴリフィルター（掲示板、思い出）
+class CategoryFilter extends StatelessWidget {
+  final String? selectedCategory;
+  final Function(String?) onCategorySelected;
+  final Map<String, Color> themeColors;
+
+  const CategoryFilter({
+    super.key,
+    required this.selectedCategory,
+    required this.onCategorySelected,
+    required this.themeColors,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      scrollDirection: Axis.horizontal,
+      padding: const EdgeInsets.fromLTRB(10, 25, 0, 0),
+      child: Row(
+        children: themeColors.keys.map((category) {
+          final Color themeColor = AppColors.getCategoryColor(
+            category,
+            themeColors,
+          );
+          final bool isSelected = selectedCategory == category;
+
+          return Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            child: OutlinedButton(
+              onPressed: () {
+                // すでに選択中なら解除(null)、そうでなければ選択(category)
+                onCategorySelected(isSelected ? null : category);
+              },
+              style: OutlinedButton.styleFrom(
+                backgroundColor: isSelected ? themeColor : Colors.white,
+                foregroundColor: isSelected
+                    ? Colors.white
+                    : AppColors.mainBrown,
+                side: BorderSide(color: themeColor, width: 2.0),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 40,
+                  vertical: 12,
+                ),
+              ),
+              child: Text(
+                category,
+                style: const TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 20,
+                ),
+              ),
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+}
+
+//-----------------------------------------------------------------
+//左上の戻るボタン
+Widget commonBackButton(BuildContext context, {VoidCallback? onPressed}) {
+  return IconButton(
+    icon: const Icon(Icons.arrow_back_ios_new, color: AppColors.mainBrown),
+    onPressed: onPressed ?? () => Navigator.of(context).pop(),
+  );
 }
