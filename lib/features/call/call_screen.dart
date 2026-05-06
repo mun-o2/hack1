@@ -1,17 +1,19 @@
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hack1/features/materials.dart';
 
-class CallPage extends StatefulWidget {
+class CallPage extends ConsumerStatefulWidget {
   final String channelName;
 
   const CallPage({super.key, required this.channelName});
 
   @override
-  State<CallPage> createState() => _CallPageState();
+  ConsumerState<CallPage> createState() => _CallPageState();
 }
 
-class _CallPageState extends State<CallPage> {
+class _CallPageState extends ConsumerState<CallPage> {
   bool _isMuted = false;
   bool _isVideoOff = false;
   bool _isRemoteVideoOff = false;
@@ -205,9 +207,8 @@ class _CallPageState extends State<CallPage> {
   Future<void> _leaveCall() async {
     await _engine.leaveChannel();
 
-    if (mounted) {
-      Navigator.pop(context);
-    }
+    if (!mounted) return;
+    context.go('/after-call/${widget.channelName}');
   }
 }
 

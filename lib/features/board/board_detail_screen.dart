@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:hack1/features/call/call_screen.dart';
+import 'package:go_router/go_router.dart';
 import 'package:hack1/features/materials.dart';
 
 class BoardDetailScreen extends StatelessWidget {
@@ -96,13 +96,9 @@ class BoardDetailScreen extends StatelessWidget {
             ElevatedButton(
               onPressed: () {
                 //お話をするボタンの処理
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => CallPage(channelName: post.id),
-                  ),
-                );
+                context.push('/call/${post.id}');
               },
+
               style: ElevatedButton.styleFrom(
                 backgroundColor: AppColors.mainBrown,
                 shape: RoundedRectangleBorder(

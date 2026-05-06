@@ -1,4 +1,6 @@
 import 'package:go_router/go_router.dart';
+import 'package:hack1/features/call/after_call_screen.dart';
+import 'package:hack1/features/call/call_screen.dart';
 import 'package:hack1/features/onboarding/initial_setting_screen.dart';
 import 'package:hack1/features/onboarding/onboarding_screen.dart';
 import 'package:hack1/features/onboarding/role_select_screen.dart';
@@ -105,6 +107,22 @@ final GoRouter router = GoRouter(
     GoRoute(
       path: '/senior/setting',
       builder: (context, state) => const SeniorSettingScreen(),
+    ),
+    GoRoute(
+      path: '/call/:channelName',
+      builder: (context, state) {
+        final channelName = state.pathParameters['channelName']!;
+
+        return CallPage(channelName: channelName);
+      },
+    ),
+    GoRoute(
+      path: '/after-call/:channelName',
+      builder: (context, state) {
+        final channelName = state.pathParameters['channelName']!;
+
+        return AfterCallMessageScreen(channelName: channelName);
+      },
     ),
   ],
 );
