@@ -1,5 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hack1/app/user_service.dart';
 import 'package:hack1/features/materials.dart';
 
 class InitialSettingScreen extends StatefulWidget {
@@ -63,7 +65,32 @@ class _InitialSettingScreenState extends State<InitialSettingScreen> {
               Padding(
                 padding: const EdgeInsets.only(bottom: 16),
                 child: ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
+                    final userId = await UserService.getUserId();
+                    final role = await UserService.getRole();
+
+                    print('userId: $userId');
+                    print('role: $role');
+
+                    if (userId == null || role == null) {
+                      print('useridかroleがnullです');
+                      return;
+                    }
+                    ;
+                    //firestore処理
+                    await FirebaseFirestore.instance
+                        .collection('users')
+                        .doc(userId)
+                        .set({
+                          'name': _nameController.text,
+                          'birth': _birthController.text,
+                          'genre': _genreController.text,
+                          'role': role,
+                          'createdAt': Timestamp.now(),
+                        });
+
+                    if (!context.mounted) return;
+
                     if (widget.isSenior) {
                       context.go('/senior');
                     } else {
