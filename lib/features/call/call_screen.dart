@@ -1,27 +1,57 @@
 import 'package:agora_rtc_engine/agora_rtc_engine.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hack1/app/user_service.dart';
 import 'package:hack1/features/materials.dart';
 
-class CallPage extends StatefulWidget {
-  final String channelName;
+class CallPage extends ConsumerStatefulWidget {
+  final String postId;
 
-  const CallPage({super.key, required this.channelName});
+  const CallPage({super.key, required this.postId});
 
   @override
-  State<CallPage> createState() => _CallPageState();
+  ConsumerState<CallPage> createState() => _CallPageState();
 }
 
-class _CallPageState extends State<CallPage> {
+class _CallPageState extends ConsumerState<CallPage> {
   bool _isMuted = false;
   bool _isVideoOff = false;
   bool _isRemoteVideoOff = false;
   late final RtcEngine _engine;
   int? _remoteUid;
 
+  String? partnerId;
+  String? channelName;
+
+  bool _partnerJoined = false;
+  DateTime? _startedAt;
+
   @override
   void initState() {
     super.initState();
-    initAgora();
+
+    _loadCallInfo();
+  }
+
+  // 会話スタート時の変数保存
+  Future<void> _loadCallInfo() async {
+    final postDoc = await FirebaseFirestore.instance
+        .collection('posts')
+        .doc(widget.postId)
+        .get();
+
+    final data = postDoc.data();
+    if (data == null) return;
+
+    partnerId = data['userId'];
+    channelName = 'call_${widget.postId}';
+
+    await initAgora();
+
+    if (!mounted) return;
+    setState(() {});
   }
 
   Future<void> initAgora() async {
@@ -42,6 +72,8 @@ class _CallPageState extends State<CallPage> {
           print("相手が入室: $remoteUid");
           setState(() {
             _remoteUid = remoteUid;
+            _partnerJoined = true; //相手が入ってきたか
+            _startedAt = DateTime.now(); //相手が入ってきた時間をスタート時間にする
           });
         },
         onUserOffline: (connection, remoteUid, reason) {
@@ -70,7 +102,7 @@ class _CallPageState extends State<CallPage> {
 
     await _engine.joinChannel(
       token: '',
-      channelId: widget.channelName,
+      channelId: channelName!,
       uid: 0,
       options: const ChannelMediaOptions(
         channelProfile: ChannelProfileType.channelProfileCommunication,
@@ -122,7 +154,7 @@ class _CallPageState extends State<CallPage> {
                     controller: VideoViewController.remote(
                       rtcEngine: _engine,
                       canvas: VideoCanvas(uid: _remoteUid),
-                      connection: RtcConnection(channelId: widget.channelName),
+                      connection: RtcConnection(channelId: channelName),
                     ),
                   ),
           ),
@@ -204,10 +236,25 @@ class _CallPageState extends State<CallPage> {
   // 通話終了
   Future<void> _leaveCall() async {
     await _engine.leaveChannel();
+    final userId = await UserService.getUserId();
 
-    if (mounted) {
-      Navigator.pop(context);
+    if (_partnerJoined) {
+      // 通話終了時に相手が入ったのならば、firestore callsにデータ保存
+      await FirebaseFirestore.instance
+          .collection('calls')
+          .doc(widget.postId)
+          .set({
+            'postId': widget.postId,
+            'channelName': channelName,
+            'participantIds': [userId, partnerId],
+            'status': 'ended',
+            'startedAt': Timestamp.fromDate(_startedAt!),
+            'endedAt': Timestamp.now(),
+          });
     }
+
+    if (!mounted) return;
+    context.go('/after-call/${widget.postId}');
   }
 }
 

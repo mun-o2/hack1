@@ -18,7 +18,7 @@ class _StudentBoardPostState extends ConsumerState<StudentBoardPost> {
   @override
   Widget build(BuildContext context) {
     // 現在のユーザー情報を取得
-    final user = ref.watch(currentUserProvider);
+    final userAsync = ref.watch(currentUserProvider);
     //若者側はかわいいカラーで固定
     final pinkColor = AppColors.pastelPink;
     final categoryColors = AppColors.pastelCategoryColors;
@@ -33,6 +33,14 @@ class _StudentBoardPostState extends ConsumerState<StudentBoardPost> {
           return;
         } else if (_selectedCategory.isEmpty) {
           _showCustomToast(context, 'カテゴリを選択してください', pinkColor);
+          return;
+        }
+
+        // firestoreユーザ情報取得
+        final user = userAsync.value;
+
+        if (user == null) {
+          _showCustomToast(context, 'ユーザ情報を取得中です', pinkColor);
           return;
         }
 

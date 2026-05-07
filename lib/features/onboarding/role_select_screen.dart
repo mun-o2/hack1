@@ -1,16 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hack1/app/user_service.dart';
 import 'package:hack1/features/materials.dart';
 
-class RoleSelectScreen extends StatefulWidget {
+class RoleSelectScreen extends ConsumerStatefulWidget {
   const RoleSelectScreen({super.key});
 
   @override
-  State<RoleSelectScreen> createState() => _RoleSelectScreenState();
+  ConsumerState<RoleSelectScreen> createState() => _RoleSelectScreenState();
 }
 
-class _RoleSelectScreenState extends State<RoleSelectScreen> {
+class _RoleSelectScreenState extends ConsumerState<RoleSelectScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,13 +35,13 @@ class _RoleSelectScreenState extends State<RoleSelectScreen> {
               _buildRoleButton(
                 label: '高齢者として',
                 backgroundColor: const Color(0xFFB7C7A6),
-                onTap: () => context.go('/initial/senior'),
+                onTap: () => _saveRoleAndGo('senior'),
               ),
               const SizedBox(height: 24),
               _buildRoleButton(
                 label: '若者として',
                 backgroundColor: const Color(0xFFF1CC84),
-                onTap: () => context.go('/initial/student'),
+                onTap: () => _saveRoleAndGo('student'),
               ),
               const SizedBox(height: 24),
             ],
@@ -76,5 +77,14 @@ class _RoleSelectScreenState extends State<RoleSelectScreen> {
         ),
       ),
     );
+  }
+
+  // roleの保存と画面切り替え
+  Future<void> _saveRoleAndGo(String role) async {
+    await UserService.saveRole(role);
+    ref.read(roleProvider.notifier).state = role; // アプリ内でrole使用するため
+    if (!mounted) return;
+
+    context.go(role == 'senior' ? '/initial/senior' : '/initial/student');
   }
 }
