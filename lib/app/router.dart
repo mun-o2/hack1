@@ -117,11 +117,11 @@ final GoRouter router = GoRouter(
       },
     ),
     GoRoute(
-      path: '/after-call/:channelName',
+      path: '/after-call/:postId',
       builder: (context, state) {
-        final channelName = state.pathParameters['channelName']!;
+        final postId = state.pathParameters['postId']!;
 
-        return AfterCallMessageScreen(channelName: channelName);
+        return AfterCallMessageScreen(postId: postId);
       },
     ),
   ],
