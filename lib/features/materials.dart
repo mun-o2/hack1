@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
+import 'package:hack1/app/user_service.dart';
 
 //ロール（若者or高齢者）を保持するプロバイダー
 final roleProvider = StateProvider<String>(
@@ -17,8 +18,26 @@ class AppUser {
   AppUser({required this.userId, required this.userName, required this.role});
 }
 
-final currentUserProvider = StateProvider<AppUser>((ref) {
-  return AppUser(userId: 'test_user_001', userName: 'はるかちゃん', role: 'student');
+final currentUserProvider = FutureProvider<AppUser>((ref) async {
+  final userId = await UserService.getUserId();
+  final role = await UserService.getRole();
+
+  if (userId == null || role == null) {
+    throw Exception('ユーザ情報がありません');
+  }
+
+  final doc = await FirebaseFirestore.instance
+      .collection('users')
+      .doc(userId)
+      .get();
+
+  final data = doc.data();
+
+  if (data == null) {
+    throw Exception('ユーザデータがありません');
+  }
+
+  return AppUser(userId: userId, userName: data['name'] ?? '', role: role);
 });
 
 //-----------------------------------------------------------------

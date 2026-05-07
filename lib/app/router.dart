@@ -109,11 +109,11 @@ final GoRouter router = GoRouter(
       builder: (context, state) => const SeniorSettingScreen(),
     ),
     GoRoute(
-      path: '/call/:channelName',
+      path: '/call/:postId',
       builder: (context, state) {
-        final channelName = state.pathParameters['channelName']!;
+        final postId = state.pathParameters['postId']!;
 
-        return CallPage(channelName: channelName);
+        return CallPage(postId: postId);
       },
     ),
     GoRoute(

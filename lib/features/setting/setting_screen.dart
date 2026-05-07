@@ -87,7 +87,7 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
   Widget _accountSetting() {
     //現在のアイコン背景色
     final currentIconColor = ref.watch(iconBgColorProvider);
-    final user = ref.watch(currentUserProvider);
+    final userAsync = ref.watch(currentUserProvider);
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 20),
@@ -162,9 +162,13 @@ class _SettingScreenState extends ConsumerState<SettingScreen> {
           //名前
           _buildSectionTitle('呼ばれたい名前'),
           const SizedBox(height: 8),
-          SettingButton(
-            label: user.userName, // 後で変数にする
-            onTap: () => print('名前変更ダイアログへ'),
+          userAsync.when(
+            data: (user) => SettingButton(
+              label: user.userName, // 後で変数にする
+              onTap: () => print('名前変更ダイアログへ'),
+            ),
+            loading: () => const CircularProgressIndicator(),
+            error: (e, _) => Text('ユーザー情報を取得できません'),
           ),
 
           const SizedBox(height: 24),
