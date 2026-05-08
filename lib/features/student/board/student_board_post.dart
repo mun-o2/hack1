@@ -89,43 +89,58 @@ class _StudentBoardPostState extends ConsumerState<StudentBoardPost> {
       ),
     );
 
-    return Container(
-      width: double.infinity,
-      // 画面の高さの75%くらいに収める
-      height: MediaQuery.of(context).size.height * 0.75,
-      padding: const EdgeInsets.fromLTRB(30, 20, 30, 40),
-      decoration: BoxDecoration(
-        color: AppColors.backgroundBeige, // 背景色
-        border: Border.all(
-          color: AppColors.mainBrown, // AppColors.mainBrown があればそれを使う
-          width: 1.0,
+    return GestureDetector(
+      behavior: HitTestBehavior.opaque,
+      onTap: () {
+        FocusManager.instance.primaryFocus?.unfocus();
+      },
+      child: AnimatedPadding(
+        duration: const Duration(milliseconds: 200),
+        padding: EdgeInsets.only(
+          bottom: MediaQuery.of(context).viewInsets.bottom,
         ),
-        borderRadius: const BorderRadius.only(
-          topLeft: Radius.circular(20),
-          topRight: Radius.circular(20),
+        child: Container(
+          width: double.infinity,
+          height: MediaQuery.of(context).size.height * 0.75,
+          padding: const EdgeInsets.fromLTRB(30, 20, 30, 24),
+          decoration: BoxDecoration(
+            color: AppColors.backgroundBeige,
+            border: Border.all(color: AppColors.mainBrown, width: 1.0),
+            borderRadius: const BorderRadius.only(
+              topLeft: Radius.circular(20),
+              topRight: Radius.circular(20),
+            ),
+          ),
+          child: SingleChildScrollView(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            child: Column(
+              children: [
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [cancelButton, saveButton],
+                ),
+
+                const SizedBox(height: 20),
+
+                BoardWritingSpace(onChanged: (text) => _enteredText = text),
+
+                const SizedBox(height: 16),
+
+                CategorySelect(
+                  isMultiSelect: false,
+                  categoryColors: categoryColors,
+                  onChanged: (category) {
+                    setState(() {
+                      _selectedCategory = category as String;
+                    });
+                  },
+                ),
+
+                const SizedBox(height: 40),
+              ],
+            ),
+          ),
         ),
-      ),
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [cancelButton, saveButton],
-          ),
-          const SizedBox(height: 20),
-          // 入力スペース
-          BoardWritingSpace(onChanged: (text) => _enteredText = text),
-          const SizedBox(height: 10),
-          // カテゴリ選択
-          CategorySelect(
-            isMultiSelect: false, // 単一選択
-            categoryColors: categoryColors,
-            onChanged: (category) {
-              setState(() {
-                _selectedCategory = category as String; // Stringとして受け取る
-              });
-            },
-          ),
-        ],
       ),
     );
   }

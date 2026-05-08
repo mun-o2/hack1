@@ -32,90 +32,97 @@ class _InitialSettingScreenState extends State<InitialSettingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.backgroundBeige,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 36),
-              const Text(
-                '初期設定',
-                textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: AppColors.mainBrown,
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-              const SizedBox(height: 48),
-              _buildLabel('呼ばれたい名前'),
-              const SizedBox(height: 12),
-              _buildTextField(_nameController, hintText: ''),
-              const SizedBox(height: 24),
-              _buildLabel(_birthLabel),
-              const SizedBox(height: 12),
-              _buildTextField(_birthController, hintText: ''),
-              const SizedBox(height: 24),
-              _buildLabel(_genreLabel),
-              const SizedBox(height: 12),
-              _buildTextField(_genreController, hintText: ''),
-              const Spacer(),
-              Padding(
-                padding: const EdgeInsets.only(bottom: 16),
-                child: ElevatedButton(
-                  onPressed: () async {
-                    final userId = await UserService.getUserId();
-                    final role = await UserService.getRole();
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: SafeArea(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 24),
 
-                    print('userId: $userId');
-                    print('role: $role');
-
-                    if (userId == null || role == null) {
-                      print('useridかroleがnullです');
-                      return;
-                    }
-                    ;
-                    //firestore処理
-                    await FirebaseFirestore.instance
-                        .collection('users')
-                        .doc(userId)
-                        .set({
-                          'name': _nameController.text,
-                          'birth': _birthController.text,
-                          'genre': _genreController.text,
-                          'role': role,
-                          'createdAt': Timestamp.now(),
-                        });
-
-                    if (!context.mounted) return;
-
-                    if (widget.isSenior) {
-                      context.go('/senior');
-                    } else {
-                      context.go('/student');
-                    }
-                  },
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFFF4A5B1),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(24),
-                    ),
-                    padding: const EdgeInsets.symmetric(vertical: 16),
-                    elevation: 0,
-                  ),
-                  child: const Text(
-                    'はじめる',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 18,
-                      fontWeight: FontWeight.w700,
-                    ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                const SizedBox(height: 36),
+                const Text(
+                  '初期設定',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: AppColors.mainBrown,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
-              ),
-            ],
+                const SizedBox(height: 48),
+                _buildLabel('呼ばれたい名前'),
+                const SizedBox(height: 12),
+                _buildTextField(_nameController, hintText: ''),
+                const SizedBox(height: 24),
+                _buildLabel(_birthLabel),
+                const SizedBox(height: 12),
+                _buildTextField(_birthController, hintText: ''),
+                const SizedBox(height: 24),
+                _buildLabel(_genreLabel),
+                const SizedBox(height: 12),
+                _buildTextField(_genreController, hintText: ''),
+                const Spacer(),
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 16),
+                  child: ElevatedButton(
+                    onPressed: () async {
+                      final userId = await UserService.getUserId();
+                      final role = await UserService.getRole();
+
+                      print('userId: $userId');
+                      print('role: $role');
+
+                      if (userId == null || role == null) {
+                        print('useridかroleがnullです');
+                        return;
+                      }
+                      ;
+                      //firestore処理
+                      await FirebaseFirestore.instance
+                          .collection('users')
+                          .doc(userId)
+                          .set({
+                            'name': _nameController.text,
+                            'birth': _birthController.text,
+                            'genre': _genreController.text,
+                            'role': role,
+                            'createdAt': Timestamp.now(),
+                          });
+
+                      if (!context.mounted) return;
+
+                      if (widget.isSenior) {
+                        context.go('/senior');
+                      } else {
+                        context.go('/student');
+                      }
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFF4A5B1),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(24),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                      elevation: 0,
+                    ),
+                    child: const Text(
+                      'はじめる',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       ),

@@ -17,11 +17,13 @@ class StudentMainTab extends StatelessWidget {
       extendBody: false,
       body: navigationShell,
 
+      /*
       floatingActionButtonLocation: FloatingActionButtonLocation.startFloat,
       floatingActionButton: FloatingActionButton(
         onPressed: () => context.go('/role'),
         child: const Icon(Icons.home),
       ),
+      */
 
       // ホーム画面以外のときにのみナビゲーションバーを表示
       bottomNavigationBar: navigationShell.currentIndex == 0

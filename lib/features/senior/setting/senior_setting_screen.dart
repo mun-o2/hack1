@@ -92,7 +92,7 @@ class _SeniorSettingScreenState extends ConsumerState<SeniorSettingScreen> {
     return InkWell(
       onTap: onTap,
       child: Container(
-        width: 200,
+        width: 100,
         height: 50,
         decoration: BoxDecoration(
           color: isSelected ? color : Colors.white,

@@ -101,79 +101,105 @@ class _AfterCallMessageScreenState
       context,
     ).showSnackBar(const SnackBar(content: Text('思い出に保存されました')));
 
-    context.go(role == 'senior' ? '/senior/memory' : '/student/memory');
+    context.go(role == 'senior' ? '/senior' : '/student/memory');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      resizeToAvoidBottomInset: false, // キーボードが出てもボタンが上がらないように
+      resizeToAvoidBottomInset: false,
       backgroundColor: AppColors.backgroundBeige,
-      body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const SizedBox(height: 24),
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () {
+          FocusManager.instance.primaryFocus?.unfocus();
+        },
+        child: SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const SizedBox(height: 24),
 
-              const Text(
-                '通話を終了しました',
-                style: TextStyle(
-                  color: AppColors.mainBrown,
-                  fontSize: 24,
-                  fontWeight: FontWeight.w700,
-                ),
-              ),
-
-              const SizedBox(height: 12),
-
-              const Text(
-                '相手にひとことメッセージを送って、思い出に保存しましょう',
-                style: TextStyle(
-                  color: AppColors.mainBrown,
-                  fontSize: 15,
-                  height: 1.5,
-                ),
-              ),
-
-              const SizedBox(height: 32),
-
-              TextField(
-                controller: _messageController,
-                maxLines: 6,
-                decoration: InputDecoration(
-                  hintText: '今日はお話しできてよかったです。',
-                  hintStyle: TextStyle(color: Colors.grey),
-                  filled: true,
-                  fillColor: Colors.white,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(24),
-                    borderSide: BorderSide.none,
+                const Text(
+                  '通話を終了しました',
+                  style: TextStyle(
+                    color: AppColors.mainBrown,
+                    fontSize: 24,
+                    fontWeight: FontWeight.w700,
                   ),
                 ),
-              ),
 
-              const Spacer(),
+                const SizedBox(height: 12),
 
-              SizedBox(
-                width: double.infinity,
-                height: 56,
-                child: ElevatedButton(
-                  onPressed: _isSending ? null : _sendMessage,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.mainBrown,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadiusGeometry.circular(28),
+                const Text(
+                  '相手にひとことメッセージを送って、思い出に保存しましょう',
+                  style: TextStyle(
+                    color: AppColors.mainBrown,
+                    fontSize: 15,
+                    height: 1.5,
+                  ),
+                ),
+
+                const SizedBox(height: 32),
+
+                Container(
+                  height: 180,
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 20,
+                    vertical: 8,
+                  ),
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                  child: TextField(
+                    controller: _messageController,
+                    maxLines: null,
+                    maxLength: 50,
+                    decoration: const InputDecoration(
+                      hintText: '今日はお話しできてよかったです。',
+                      hintStyle: TextStyle(color: Colors.grey),
+                      border: InputBorder.none,
+                      counterText: '',
                     ),
                   ),
-                  child: Text(_isSending ? '保存中...' : '思い出に保存する'),
                 ),
-              ),
 
-              const SizedBox(height: 12),
-            ],
+                const SizedBox(height: 20),
+
+                const Text(
+                  '画面の余白をタップするとキーボードが閉じます',
+                  style: TextStyle(color: Colors.grey, fontSize: 12),
+                ),
+
+                const Spacer(),
+
+                SizedBox(
+                  width: double.infinity,
+                  height: 56,
+                  child: ElevatedButton(
+                    onPressed: _isSending
+                        ? null
+                        : () {
+                            FocusManager.instance.primaryFocus?.unfocus();
+                            _sendMessage();
+                          },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.mainBrown,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(28),
+                      ),
+                    ),
+                    child: Text(_isSending ? '保存中...' : '思い出に保存する'),
+                  ),
+                ),
+
+                const SizedBox(height: 12),
+              ],
+            ),
           ),
         ),
       ),

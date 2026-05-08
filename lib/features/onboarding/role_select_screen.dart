@@ -12,6 +12,8 @@ class RoleSelectScreen extends ConsumerStatefulWidget {
 }
 
 class _RoleSelectScreenState extends ConsumerState<RoleSelectScreen> {
+  String? selectedRole;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -34,14 +36,30 @@ class _RoleSelectScreenState extends ConsumerState<RoleSelectScreen> {
               const SizedBox(height: 48),
               _buildRoleButton(
                 label: '高齢者として',
-                backgroundColor: const Color(0xFFB7C7A6),
-                onTap: () => _saveRoleAndGo('senior'),
+                backgroundColor: selectedRole == 'senior'
+                    ? const Color(0xFF8DA07A)
+                    : const Color(0xFFB7C7A6),
+                onTap: () {
+                  setState(() {
+                    selectedRole = 'senior';
+                  });
+
+                  _saveRoleAndGo('senior');
+                },
               ),
               const SizedBox(height: 24),
               _buildRoleButton(
                 label: '若者として',
-                backgroundColor: const Color(0xFFF1CC84),
-                onTap: () => _saveRoleAndGo('student'),
+                backgroundColor: selectedRole == 'student'
+                    ? const Color(0xFFE0B55D)
+                    : const Color(0xFFF1CC84),
+                onTap: () {
+                  setState(() {
+                    selectedRole = 'student';
+                  });
+
+                  _saveRoleAndGo('student');
+                },
               ),
               const Spacer(flex: 1),
               Row(
@@ -122,22 +140,26 @@ class _RoleSelectScreenState extends ConsumerState<RoleSelectScreen> {
     required Color backgroundColor,
     required VoidCallback onTap,
   }) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: double.infinity,
-        height: 88,
-        decoration: BoxDecoration(
-          color: backgroundColor,
-          borderRadius: BorderRadius.circular(30),
-        ),
-        child: Center(
-          child: Text(
-            label,
-            style: const TextStyle(
-              color: Color(0xFF5B3E3E),
-              fontSize: 18,
-              fontWeight: FontWeight.w700,
+    return Material(
+      color: Colors.transparent,
+      child: InkWell(
+        borderRadius: BorderRadius.circular(30),
+        onTap: onTap,
+        child: Container(
+          width: double.infinity,
+          height: 88,
+          decoration: BoxDecoration(
+            color: backgroundColor,
+            borderRadius: BorderRadius.circular(30),
+          ),
+          child: Center(
+            child: Text(
+              label,
+              style: const TextStyle(
+                color: Color(0xFF5B3E3E),
+                fontSize: 18,
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
         ),
