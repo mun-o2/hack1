@@ -16,14 +16,8 @@ class _SeniorMemoryScreenState extends ConsumerState<SeniorMemoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final memories = ref.watch(memoryListProvider);
-    final Map<String, dynamic> theme = ref.watch(colorThemeProvider);
-    final Map<String, Color> categoryColors = Map<String, Color>.from(
-      theme['categories'] as Map,
-    );
-    final filteredMemories = selectedCategory == null
-        ? memories
-        : memories.where((m) => m.category == selectedCategory).toList();
+    final memoryAsync = ref.watch(memoryListProvider);
+    final categoryColors = AppColors.contrastCategoryColors;
 
     return BaseBackground(
       title: '思い出',
@@ -41,22 +35,47 @@ class _SeniorMemoryScreenState extends ConsumerState<SeniorMemoryScreen> {
             themeColors: categoryColors,
           ),
           const SizedBox(height: 10),
-
           // 思い出リスト
           Expanded(
-            child: ListView.builder(
-              itemCount: filteredMemories.length, // Providerからのデータ数
-              itemBuilder: (context, index) {
-                final memory = filteredMemories[index];
+            child: memoryAsync.when(
+              data: (memories) {
+                final filteredMemories = selectedCategory == null
+                    ? memories
+                    : memories
+                          .where((m) => m.category == selectedCategory)
+                          .toList();
 
-                return _memoryCard(
-                  memory.partnerName,
-                  memory.category,
-                  memory.dateTime,
-                  memory.icon,
-                  categoryColors,
+                if (filteredMemories.isEmpty) {
+                  return const Center(
+                    child: Text(
+                      'まだ思い出がありません',
+                      style: TextStyle(
+                        color: AppColors.mainBrown,
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  );
+                }
+
+                return ListView.builder(
+                  itemCount: filteredMemories.length, // Providerからのデータ数
+                  itemBuilder: (context, index) {
+                    final memory = filteredMemories[index];
+
+                    return _memoryCard(
+                      memory.partnerName,
+                      memory.category,
+                      memory.dateTime,
+                      memory.icon,
+                      categoryColors,
+                    );
+                  },
                 );
               },
+              loading: () => const Center(child: CircularProgressIndicator()),
+              error: (error, stack) =>
+                  Center(child: Text('読み込みに失敗しました： $error')),
             ),
           ),
         ],
@@ -115,7 +134,7 @@ class _SeniorMemoryScreenState extends ConsumerState<SeniorMemoryScreen> {
               const SizedBox(width: 26),
 
               Text(
-                '$partnerNameとお話',
+                '$partnerNameさんとお話',
                 style: const TextStyle(
                   fontSize: 20,
                   color: AppColors.mainBrown,

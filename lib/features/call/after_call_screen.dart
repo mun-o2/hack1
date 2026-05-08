@@ -7,9 +7,9 @@ import 'package:hack1/app/user_service.dart';
 import 'package:hack1/features/materials.dart';
 
 class AfterCallMessageScreen extends ConsumerStatefulWidget {
-  final String channelName;
+  final String postId;
 
-  const AfterCallMessageScreen({super.key, required this.channelName});
+  const AfterCallMessageScreen({super.key, required this.postId});
 
   @override
   ConsumerState<AfterCallMessageScreen> createState() =>
@@ -44,11 +44,53 @@ class _AfterCallMessageScreenState
     final userId = await UserService.getOrCreateUserId();
     final role = ref.read(roleProvider);
 
+    // firestoreからデータ持ってくる
+    final postDoc = await FirebaseFirestore.instance
+        .collection('posts')
+        .doc(widget.postId)
+        .get();
+
+    final postData = postDoc.data();
+
+    final studentId = postData?['userId'] ?? '';
+    final studentName = postData?['userName'] ?? '';
+
+    final callDoc = await FirebaseFirestore.instance
+        .collection('calls')
+        .doc(widget.postId)
+        .get();
+
+    final callData = callDoc.data();
+    final participantIds = List<String>.from(callData?['participantIds'] ?? []);
+
+    final seniorId = participantIds.firstWhere(
+      (id) => id != studentId,
+      orElse: () => '',
+    );
+
+    String seniorName = '';
+
+    if (seniorId.isNotEmpty) {
+      final seniorDoc = await FirebaseFirestore.instance
+          .collection('users')
+          .doc(seniorId)
+          .get();
+
+      seniorName = seniorDoc.data()?['name'] ?? '';
+    }
+
     await FirebaseFirestore.instance.collection('memories').add({
-      'postId': widget.channelName,
+      'postId': widget.postId,
       'userId': userId,
       'role': role,
       'message': message,
+
+      'studentId': studentId,
+      'studentName': studentName,
+      'seniorId': seniorId,
+      'seniorName': seniorName,
+
+      'category': postData?['category'] ?? '',
       'createdAt': FieldValue.serverTimestamp(),
     });
 
