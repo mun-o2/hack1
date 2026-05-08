@@ -51,11 +51,11 @@ class StudentHomeScreen extends StatelessWidget {
 
                       // ひつじ
                       Positioned(
-                        left: -15,
-                        bottom: 0,
+                        left: -30,
+                        bottom: 5,
                         child: Image.asset(
                           'assets/images/right.png',
-                          height: 120, // サイズ
+                          height: 110, // サイズ
                           fit: BoxFit.contain,
                         ),
                       ),

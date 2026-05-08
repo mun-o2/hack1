@@ -11,119 +11,135 @@ class BoardDetailScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.backgroundBeige,
-      body: SafeArea(
-        child: Column(
-          children: [
-            // 戻るボタン + タイトル
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
-              child: Row(
-                children: [
-                  IconButton(
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+      body: GestureDetector(
+        onTap: () {
+          FocusScope.of(context).unfocus();
+        },
+        child: SafeArea(
+          child: Column(
+            children: [
+              // 戻るボタン + タイトル
+              Padding(
+                padding: const EdgeInsets.fromLTRB(16, 16, 16, 0),
+                child: Row(
+                  children: [
+                    IconButton(
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
 
-                    icon: const Icon(
-                      Icons.arrow_back_ios,
-                      color: AppColors.mainBrown,
-                    ),
-                  ),
-
-                  const Expanded(
-                    child: Text(
-                      '掲示板',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        fontSize: 22,
-                        fontWeight: FontWeight.bold,
+                      icon: const Icon(
+                        Icons.arrow_back_ios,
                         color: AppColors.mainBrown,
                       ),
                     ),
-                  ),
-                  const SizedBox(width: 48), // 戻るボタンのスペースを確保
-                ],
-              ),
-            ),
 
-            const SizedBox(height: 60),
-
-            // 投稿カード
-            Container(
-              width: 280,
-              padding: const EdgeInsets.all(16),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: AppColors.mainBrown, width: 2),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    post.category,
-                    style: const TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
-                      color: AppColors.mainBrown,
+                    const Expanded(
+                      child: Text(
+                        '掲示板',
+                        textAlign: TextAlign.center,
+                        style: TextStyle(
+                          fontSize: 22,
+                          fontWeight: FontWeight.bold,
+                          color: AppColors.mainBrown,
+                        ),
+                      ),
                     ),
-                  ),
-                  const SizedBox(height: 12),
-
-                  Text(
-                    post.dateTime,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      color: AppColors.mainBrown,
-                    ),
-                  ),
-
-                  const SizedBox(height: 16),
-                  Text(
-                    post.content,
-                    style: const TextStyle(
-                      fontSize: 18,
-                      color: AppColors.mainBrown,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 32),
-
-            // お話をするボタン
-            ElevatedButton(
-              onPressed: () {
-                //お話をするボタンの処理
-                context.push('/call/${post.id}');
-              },
-
-              style: ElevatedButton.styleFrom(
-                backgroundColor: AppColors.mainBrown,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 40,
-                  vertical: 12,
+                    const SizedBox(width: 48), // 戻るボタンのスペースを確保
+                  ],
                 ),
               ),
-              child: const Text(
-                'お話をする',
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
+
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // 投稿カード
+                        Container(
+                          width: double.infinity,
+                          padding: const EdgeInsets.all(28),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(24),
+                            border: Border.all(
+                              color: AppColors.mainBrown,
+                              width: 3,
+                            ),
+                          ),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                post.category,
+                                style: const TextStyle(
+                                  fontSize: 26,
+                                  fontWeight: FontWeight.bold,
+                                  color: AppColors.mainBrown,
+                                ),
+                              ),
+                              const SizedBox(height: 20),
+                              Text(
+                                post.dateTime,
+                                style: const TextStyle(
+                                  fontSize: 18,
+                                  color: AppColors.mainBrown,
+                                ),
+                              ),
+                              const SizedBox(height: 24),
+                              Text(
+                                post.content,
+                                style: const TextStyle(
+                                  fontSize: 19,
+                                  height: 1.5,
+                                  color: AppColors.mainBrown,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+
+                        const SizedBox(height: 36),
+
+                        SizedBox(
+                          width: 220,
+                          height: 56,
+                          child: ElevatedButton(
+                            onPressed: () {
+                              context.push('/call/${post.id}');
+                            },
+                            style: ElevatedButton.styleFrom(
+                              backgroundColor: AppColors.mainBrown,
+                              elevation: 4,
+                              shadowColor: AppColors.mainBrown.withOpacity(
+                                0.25,
+                              ),
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(14),
+                              ),
+                            ),
+                            child: const Text(
+                              'この部屋で話す',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
-            ),
 
-            const Spacer(),
-
-            // ひつじ + 芝生画像
-            // TODO: 画像のパス
-          ],
+              // ひつじ + 芝生画像
+              // TODO: 画像のパス
+            ],
+          ),
         ),
       ),
     );

@@ -110,22 +110,16 @@ final postsStreamProvider = StreamProvider<List<Post>>((ref) {
 
 //-----------------------------------------------------------------
 //外部からこのクラスを操作するためのプロバイダー
-final memoryListProvider = FutureProvider<List<Memory>>((ref) async {
-  final userAsync = ref.watch(currentUserProvider);
-  final user = userAsync.value;
-
-  if (user == null) {
-    return [];
-  }
-
-  final snapshot = await FirebaseFirestore.instance
+final memoryListProvider = StreamProvider<List<Memory>>((ref) {
+  return FirebaseFirestore.instance
       .collection('memories')
-      .where('userId', isEqualTo: user.userId)
-      .get();
-
-  return snapshot.docs.map((doc) {
-    return Memory.fromFirestore(doc);
-  }).toList();
+      .orderBy('createdAt', descending: true)
+      .snapshots()
+      .map((snapshot) {
+        return snapshot.docs.map((doc) {
+          return Memory.fromFirestore(doc);
+        }).toList();
+      });
 });
 
 //思い出のデータモデル(firestoreからに変更済み)

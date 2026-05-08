@@ -64,7 +64,7 @@ class _SeniorMemoryScreenState extends ConsumerState<SeniorMemoryScreen> {
                     final memory = filteredMemories[index];
 
                     return _memoryCard(
-                      memory.partnerName,
+                      memory.studentName,
                       memory.category,
                       memory.dateTime,
                       memory.icon,
@@ -85,7 +85,7 @@ class _SeniorMemoryScreenState extends ConsumerState<SeniorMemoryScreen> {
 
   // 思い出カード
   Widget _memoryCard(
-    String partnerName,
+    String studentName,
     String category,
     String dateTime,
     String icon,
@@ -134,7 +134,7 @@ class _SeniorMemoryScreenState extends ConsumerState<SeniorMemoryScreen> {
               const SizedBox(width: 26),
 
               Text(
-                '$partnerNameさんとお話',
+                '$studentNameさんとお話',
                 style: const TextStyle(
                   fontSize: 20,
                   color: AppColors.mainBrown,
