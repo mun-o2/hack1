@@ -18,7 +18,15 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       title: 'ひつじのしおりへようこそ！',
       description: '思い出を世代を超えて共有しませんか？',
     ),
-    _OnboardingPage(asset: null, title: 'テレビ通話でいろいろなお話が出来ます', description: ''),
+    _OnboardingPage(
+      assets: [
+        'assets/images/image 63 (1).png',
+        'assets/images/telephone logo (1).png',
+        'assets/images/image 71 (1).png',
+      ],
+      title: 'テレビ通話でいろいろなお話が出来ます',
+      description: '',
+    ),
   ];
 
   @override
@@ -67,6 +75,28 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
                             page.asset!,
                             fit: BoxFit.contain,
                             width: MediaQuery.of(context).size.width * 0.68,
+                          ),
+                          const SizedBox(height: 32),
+                        ] else if (page.assets != null &&
+                            page.assets!.isNotEmpty) ...[
+                          SizedBox(
+                            height: 140,
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: page.assets!.asMap().entries.map((
+                                entry,
+                              ) {
+                                return Padding(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 1,
+                                  ),
+                                  child: Image.asset(
+                                    entry.value,
+                                    fit: BoxFit.contain,
+                                  ),
+                                );
+                              }).toList(),
+                            ),
                           ),
                           const SizedBox(height: 32),
                         ] else
@@ -159,11 +189,13 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
 class _OnboardingPage {
   final String? asset;
+  final List<String>? assets;
   final String title;
   final String description;
 
   const _OnboardingPage({
-    required this.asset,
+    this.asset,
+    this.assets,
     required this.title,
     required this.description,
   });

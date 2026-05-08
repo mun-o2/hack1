@@ -21,7 +21,7 @@ class _RoleSelectScreenState extends ConsumerState<RoleSelectScreen> {
           padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
           child: Column(
             children: [
-              const SizedBox(height: 24),
+              const Spacer(flex: 1),
               const Text(
                 'どちらとして参加しますか？',
                 textAlign: TextAlign.center,
@@ -31,7 +31,7 @@ class _RoleSelectScreenState extends ConsumerState<RoleSelectScreen> {
                   fontWeight: FontWeight.w700,
                 ),
               ),
-              const SizedBox(height: 54),
+              const SizedBox(height: 48),
               _buildRoleButton(
                 label: '高齢者として',
                 backgroundColor: const Color(0xFFB7C7A6),
@@ -43,7 +43,73 @@ class _RoleSelectScreenState extends ConsumerState<RoleSelectScreen> {
                 backgroundColor: const Color(0xFFF1CC84),
                 onTap: () => _saveRoleAndGo('student'),
               ),
-              const SizedBox(height: 24),
+              const Spacer(flex: 1),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Row(
+                    children: [
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFD9D9D9),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFFD9D9D9),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        width: 16,
+                        height: 8,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF2E2F45),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                      ),
+                    ],
+                  ),
+                  ElevatedButton(
+                    onPressed: () {},
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: const Color(0xFFFFC1C1),
+                      shape: const StadiumBorder(),
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 20,
+                        vertical: 12,
+                      ),
+                      elevation: 0,
+                    ),
+                    child: const Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '次へ',
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        SizedBox(width: 8),
+                        Icon(
+                          Icons.arrow_forward,
+                          color: Colors.white,
+                          size: 18,
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 12),
             ],
           ),
         ),
