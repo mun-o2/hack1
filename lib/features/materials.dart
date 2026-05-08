@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter/material.dart';
 import 'package:hack1/app/user_service.dart';
@@ -108,49 +109,109 @@ final postsStreamProvider = StreamProvider<List<Post>>((ref) {
 });
 
 //-----------------------------------------------------------------
-//思い出のデータモデル
+//外部からこのクラスを操作するためのプロバイダー
+final memoryListProvider = FutureProvider<List<Memory>>((ref) async {
+  final userAsync = ref.watch(currentUserProvider);
+  final user = userAsync.value;
+
+  if (user == null) {
+    return [];
+  }
+
+  final snapshot = await FirebaseFirestore.instance
+      .collection('memories')
+      .where('userId', isEqualTo: user.userId)
+      .get();
+
+  return snapshot.docs.map((doc) {
+    return Memory.fromFirestore(doc);
+  }).toList();
+});
+
+//思い出のデータモデル(firestoreからに変更済み)
 class Memory {
-  final String partnerName;
+  final String id;
+  final String userId;
+  final String role;
+  final String postId;
+  final String message;
+
+  final String studentId;
+  final String studentName;
+  final String seniorId;
+  final String seniorName;
+
   final String category;
-  final String dateTime;
-  final String icon;
+  final DateTime? createdAt;
 
   Memory({
-    required this.partnerName,
-    required this.category,
-    required this.dateTime,
-    required this.icon,
-  });
-}
+    required this.id,
+    required this.userId,
+    required this.role,
+    required this.postId,
+    required this.message,
 
-final memoryListProvider = Provider<List<Memory>>((ref) {
-  return [
-    Memory(
-      partnerName: 'はるかさん',
-      category: '震災',
-      dateTime: '4/28 17:00~17:30',
-      icon: 'assets/icons/pink-girl.png',
-    ),
-    Memory(
-      partnerName: 'さとうさん',
-      category: '戦争',
-      dateTime: '4/25 17:00~17:30',
-      icon: 'assets/icons/blue-boy.png',
-    ),
-    Memory(
-      partnerName: 'すずきさん',
-      category: '雑談',
-      dateTime: '4/20 17:00~17:30',
-      icon: 'assets/icons/pink-girl.png',
-    ),
-    Memory(
-      partnerName: 'たなかさん',
-      category: '人生',
-      dateTime: '4/18 17:00~17:30',
-      icon: 'assets/icons/blue-boy.png',
-    ),
-  ];
-});
+    required this.studentId,
+    required this.studentName,
+    required this.seniorId,
+    required this.seniorName,
+
+    required this.category,
+    required this.createdAt,
+  });
+
+  factory Memory.fromFirestore(DocumentSnapshot doc) {
+    final data = doc.data() as Map<String, dynamic>;
+
+    return Memory(
+      id: doc.id,
+      userId: data['userId'] ?? '',
+      role: data['role'] ?? '',
+      postId: data['postId'] ?? '',
+      message: data['message'] ?? '',
+      studentId: data['studentId'] ?? '',
+      studentName: data['studentName'] ?? '',
+      seniorId: data['seniorId'] ?? '',
+      seniorName: data['seniorName'] ?? '',
+      category: data['category'] ?? '',
+      createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
+    );
+  }
+
+  //表示する相手の名前
+  String get partnerName {
+    if (role == 'student') {
+      return seniorName;
+    } else {
+      return studentName;
+    }
+  }
+
+  //仮アイコン：相手の役割で固定する
+  // TODO:ユーザによって変更
+  String get icon {
+    if (role == 'student') {
+      return 'assets/icons/blue-boy.png';
+    } else {
+      return 'assets/icons/pink-girl.png';
+    }
+  }
+
+  // 仮：思い出を保存した日時を表示
+  // TODO: スタート時間と終了時間をcallsからとってくる？
+  String get dateTime {
+    if (createdAt == null) {
+      return '';
+    }
+
+    final month = createdAt!.month;
+    final day = createdAt!.day;
+    final hour = createdAt!.hour;
+    final minute = createdAt!.minute.toString().padLeft(2, '0');
+
+    return '$month/$day $hour:$minute';
+  }
+}
 
 //-----------------------------------------------------------------
 // アイコンの背景色を管理するStateProvider。初期値はパステルピンク

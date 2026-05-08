@@ -17,12 +17,8 @@ class _StudentMemoryScreenState extends ConsumerState<StudentMemoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final memories = ref.watch(memoryListProvider);
+    final memoryAsync = ref.watch(memoryListProvider);
     final categoryColors = AppColors.pastelCategoryColors;
-
-    final filteredMemories = selectedCategory == null
-        ? memories
-        : memories.where((m) => m.category == selectedCategory).toList();
 
     return BaseBackground(
       child: Scaffold(
@@ -58,19 +54,45 @@ class _StudentMemoryScreenState extends ConsumerState<StudentMemoryScreen> {
 
             // 思い出リスト
             Expanded(
-              child: ListView.builder(
-                itemCount: filteredMemories.length, // Providerからのデータ数
-                itemBuilder: (context, index) {
-                  final memory = filteredMemories[index];
+              child: memoryAsync.when(
+                data: (memories) {
+                  final filteredMemories = selectedCategory == null
+                      ? memories
+                      : memories
+                            .where((m) => m.category == selectedCategory)
+                            .toList();
 
-                  return _memoryCard(
-                    memory.partnerName,
-                    memory.category,
-                    memory.dateTime,
-                    memory.icon,
-                    categoryColors,
+                  if (filteredMemories.isEmpty) {
+                    return const Center(
+                      child: Text(
+                        'まだ思い出がありません',
+                        style: TextStyle(
+                          color: AppColors.mainBrown,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    );
+                  }
+
+                  return ListView.builder(
+                    itemCount: filteredMemories.length, // Providerからのデータ数
+                    itemBuilder: (context, index) {
+                      final memory = filteredMemories[index];
+
+                      return _memoryCard(
+                        memory.partnerName,
+                        memory.category,
+                        memory.dateTime,
+                        memory.icon,
+                        categoryColors,
+                      );
+                    },
                   );
                 },
+                loading: () => const Center(child: CircularProgressIndicator()),
+                error: (error, stack) =>
+                    Center(child: Text('読み込みに失敗しました： $error')),
               ),
             ),
           ],
@@ -130,7 +152,7 @@ class _StudentMemoryScreenState extends ConsumerState<StudentMemoryScreen> {
               const SizedBox(width: 26),
 
               Text(
-                '$partnerNameとお話',
+                '$partnerNameさんとお話',
                 style: const TextStyle(
                   fontSize: 20,
                   color: AppColors.mainBrown,
